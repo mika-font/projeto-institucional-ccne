@@ -3,7 +3,7 @@ function conectServer(){
     $bdServer = "localhost";
     $bdUser = "root";
     $bdPassword = "";
-    $bdDataBase = "";
+    $bdDataBase = "ccne_bd";
 
     $conexao = mysqli_connect($bdServer, $bdUser, $bdPassword, $bdDataBase);
     
