@@ -4,7 +4,6 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['senha'])
     include_once('conect.php');
     $conexao = conectServer();
     session_start();
-    session_regenerate_id(true);
 
     $email = $_POST['email'];
     $senha = $_POST['senha'];
@@ -30,12 +29,26 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['senha'])
             $_SESSION['id_usuario'] = $senha_bd['id_usuario'];
             $_SESSION['tipo'] = $senha_bd['tipo'];
             $_SESSION['ultimo_acesso'] = time();
+            session_regenerate_id(true); //Regenera o ID da sessão para evitar ataques de fixação de sessão
+
             header('Location: central.php'); // Redireciona para a central do sistema
         } else {
             session_destroy(); // Senha incorreta
         }
     }
-}
+} else if (isset($_GET['msg']) && $_GET['msg'] == 'nao_autorizado') {
+    echo "<script>alert('Você não está autorizado a acessar esta página.');</script>";
+} else if (isset($_GET['msg']) && $_GET['msg'] == 'timeout') {
+    echo "<script>alert('Sua sessão expirou. Por favor, faça login novamente.');</script>";
+} else if (!empty($_POST['email']) && !empty($_POST['senha'])){
+    echo "<script>alert('Por favor, preencha todos os campos.');</script>";
+} else {
+    session_start();
+    if (isset($_SESSION['email']) && isset($_SESSION['id_usuario']) && isset($_SESSION['tipo'])) {
+        header('Location: central.php'); // Se já estiver logado, redireciona para a central
+        exit();
+    }
+} 
 ?>
 
 <!DOCTYPE html>
@@ -59,6 +72,5 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['senha'])
             <a href="forms/form_user.php">Cadastrar</a>
         </form>
     </main>
-    
 </body>
 </html>
