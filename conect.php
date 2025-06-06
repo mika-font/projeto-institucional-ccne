@@ -5,10 +5,10 @@ function conectServer(){
     $bdPassword = "";
     $bdDataBase = "ccne_bd";
 
-    $conexao = mysqli_connect($bdServer, $bdUser, $bdPassword, $bdDataBase);
+    $conect = mysqli_connect($bdServer, $bdUser, $bdPassword, $bdDataBase);
     
-    if ($conexao) {
-        return $conexao;
+    if ($conect) {
+        return $conect;
     } else {
         die("Erro ao acessar o banco de dados! " . mysqli_connect_errno() . ": " . mysqli_connect_error());
     }

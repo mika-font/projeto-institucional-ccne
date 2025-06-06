@@ -2,7 +2,7 @@
     session_start();
 
     // Verifica se o usuário está logado
-    if (!isset($_SESSION['email']) || !isset($_SESSION['id_usuario']) || !isset($_SESSION['tipo']) || !isset($_SESSION['ultimo_acesso'])) {
+    if (!isset($_SESSION['email']) || !isset($_SESSION['id_user']) || !isset($_SESSION['type']) || !isset($_SESSION['last_access'])) {
         session_unset();
         session_destroy();
         header('Location: index.php?msg=nao_autorizado');
@@ -10,12 +10,12 @@
     }
 
     // Tempo máximo de inatividade
-    $tempo_limite = 900; // 15 minutos
+    $timeout = 900; // 15 minutos
 
-    if (isset($_SESSION['ultimo_acesso'])) {
-        $tempo_inativo = time() - $_SESSION['ultimo_acesso'];
+    if (isset($_SESSION['last_access'])) {
+        $idle_time = time() - $_SESSION['last_access'];
         
-        if ($tempo_inativo > $tempo_limite) {
+        if ($idle_time > $timeout) {
             session_unset();
             session_destroy();
             header('Location: index.php?msg=timeout');
@@ -24,9 +24,9 @@
     }
 
     // Atualiza o tempo do último acesso
-    $_SESSION['ultimo_acesso'] = time();
+    $_SESSION['last_access'] = time();
 
     // Conecta ao banco após verificação da sessão
     include_once('conect.php');
-    $conexao = conectServer();
+    $conect = conectServer();
 ?>
