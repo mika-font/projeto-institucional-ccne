@@ -1,40 +1,42 @@
 <?php
-    session_start();
-    include_once("../conect.php");
-    $conect = conectServer();
+session_start();
+include_once("../conect.php");
+$conect = conectServer();
 
-    $edit_mode = false;
-    $user_editing = null;
+$edit_mode = false;
+$user_editing = null;
 
-    if (isset($_SESSION['type']) && isset($_GET['id_user'])) {
-        $id_user = intval($_GET['id_user']);
+if (isset($_SESSION['type']) && isset($_GET['id_user'])) {
+    $id_user = intval($_GET['id_user']);
 
-        $query = $conect->prepare("SELECT * FROM usuario WHERE id_user = ?");
-        $query->bind_param("i", $id_user);
-        $query->execute();
-        $result = $query->get_result();
+    $query = $conect->prepare("SELECT * FROM usuario WHERE id_user = ?");
+    $query->bind_param("i", $id_user);
+    $query->execute();
+    $result = $query->get_result();
 
-        if ($result->num_rows === 1) {
-            $user_editing = $result->fetch_assoc();
-            $edit_mode = true;
-        }
+    if ($result->num_rows === 1) {
+        $user_editing = $result->fetch_assoc();
+        $edit_mode = true;
     }
+}
 
-    // Define os valores a serem preenchidos no formulário
-    $name = $user_editing['nome'] ?? '';
-    $email = $user_editing['email'] ?? '';
-    $type = $user_editing['tipo'] ?? '';
-    $id_user = $user_editing['id_user'] ?? null;
+// Define os valores a serem preenchidos no formulário
+$name = $user_editing['nome'] ?? '';
+$email = $user_editing['email'] ?? '';
+$type = $user_editing['tipo'] ?? '';
+$id_user = $user_editing['id_user'] ?? null;
 
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
     <title>Portal de Bolsas CCNE</title>
 </head>
+
 <body>
     <main>
         <form action="../processes/process_user.php" method="post">
@@ -45,22 +47,37 @@
             <label for="email">E-mail:</label>
             <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required><br>
 
-            <label for="password">Senha:</label>
-            <input type="password" id="password" name="password" value="<?= $edit_mode ? '' : 'required' ?>"><br>
+            <?php if ($edit_mode): ?>
+                <input type="hidden" name="id" id="id" value="<?= htmlspecialchars($id_user)?>" required>
 
-            <label for="repeat_password">Confirmar Senha:</label>
-            <input type="password" id="repeat_password" name="repeat_password" value="<?= $edit_mode ? '' : 'required' ?>"><br>
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password"><br>
 
-            <?php if(isset($_SESSION['type']) && $_SESSION['type'] == 4) : ?>
+                <label for="repeat_password">Repetir Senha:</label>
+                <input type="password" id="repeat_password" name="repeat_password"><br>
+            <?php else: ?>
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" required><br>
+
+                <label for="repeat_password">Repetir Senha:</label>
+                <input type="password" id="repeat_password" name="repeat_password" required><br>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['type']) && $_SESSION['type'] == 4) : ?>
                 <label for="type">Tipo de Usuário:</label>
                 <select id="type" name="type">
-                    <option value="financeiro" <?= $type == 3 ? 'selected' : '' ?>>Financeiro</option>
-                    <option value="orientador" <?= $type == 1 ? 'selected' : '' ?>>Orientador</option>
-                    <option value="direcao"    <?= $type == 2 ? 'selected' : '' ?>>Direção</option>
+                    <option value = "3" <?= $type == 3 ? 'selected' : '' ?>>Financeiro</option>
+                    <option value = "1" <?= $type == 1 ? 'selected' : '' ?>>Orientador</option>
+                    <option value = "2" <?= $type == 2 ? 'selected' : '' ?>>Direção</option>
+                    <option value = "0" <?= $type == 0 ? 'selected' : '' ?>>Estudante</option>
                 </select>
+            <?php elseif(isset($_SESSION['type'])): ?>
+                <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
+            <?php else: ?>
+                <input type="hidden" name="type" value = "0">
             <?php endif; ?>
             <br>
-            
+
             <button type="reset">Limpar</button>
             <a href="../index.php">Voltar</a>
             <br>
@@ -73,4 +90,5 @@
         </form>
     </main>
 </body>
+
 </html>

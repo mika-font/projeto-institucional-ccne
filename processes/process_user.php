@@ -1,5 +1,5 @@
 <?php
-session_start(); // Inicia a sessão
+
 if (isset($_POST['register'])){
     include_once('../conect.php');
     $conect = conectServer();
@@ -13,7 +13,7 @@ if (isset($_POST['register'])){
         // Verifica se os campos obrigatórios estão preenchidos
         
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: form_user.php?msg=4"); // E-mail inválido
+            header("Location: ../forms/form_user.php?msg=4"); // E-mail inválido
             exit();
         }
 
@@ -21,28 +21,18 @@ if (isset($_POST['register'])){
         $emaildomain = substr(strrchr($email, "@"), 1);
 
         if (!in_array($emaildomain, $allowed_domains)) {
-            header("Location: form_user.php?msg=5"); // Domínio de e-mail não permitido
+            header("Location: ../forms/form_user.php?msg=5"); // Domínio de e-mail não permitido
             exit();
         }
 
         if($password != $repeat_password) {
-            header("Location: form_user.php?msg=2"); // Senhas não coincidem
+            header("Location: ../forms/form_user.php?msg=2"); // Senhas não coincidem
             exit();
         }
 
         $type = 0; // Aluno por padrão
         if (isset($_SESSION['type']) && $_SESSION['type'] == 4) {
-            $typeInput = $_POST['type'];
-            switch ($typeInput) {
-                case 'orientador':
-                    $type = 1;
-                    break;
-                case 'direcao':
-                    $type = 2;
-                    break;
-                default:
-                    $type = 3; // financeiro
-            }
+            $type = $_POST['type'];
         }
 
         $stmt = $conect->prepare("SELECT id_user FROM usuario WHERE email = ?");
@@ -51,7 +41,7 @@ if (isset($_POST['register'])){
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            header("Location: form_user.php?msg=3"); // E-mail já cadastrado
+            header("Location: ../forms/form_user.php?msg=3"); // E-mail já cadastrado
             exit();
         }
 
@@ -64,7 +54,7 @@ if (isset($_POST['register'])){
             if (isset($_SESSION) && $_SESSION['type'] == 4) {
                 // Redirecionar o gerente para algum lugar específico
             } else {
-                header("Location: login.php?msg=1"); // Cadastro realizado com sucesso, redireciona para a página de login
+                header("Location: ../index.php?msg=1"); // Cadastro realizado com sucesso, redireciona para a página de login
                 exit();
             }
         } else {
@@ -78,17 +68,18 @@ if (isset($_POST['register'])){
 } else if (isset($_POST['edit'])){
     include_once("../control.php");
 
+    $id_user = $_POST['id'];
     $name = $_POST['name'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $repeat_password = $_POST['repeat_password'];
-    $type = $_POST['type'] ?? null; // type só é necessário se o usuário for gerente
+    $type = isset($_POST['type']) ? intval($_POST['type']) : null;
 
-    if(!empty($name) && !empty($email)) {
+    if(!empty($name) && !empty($email) && !empty($type)) {
         // Verifica se os campos obrigatórios estão preenchidos
-        
+
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: form_user.php?msg=4"); // E-mail inválido
+            header("Location: ../forms/form_user.php?msg=4"); // E-mail inválido
             exit();
         }
 
@@ -96,34 +87,34 @@ if (isset($_POST['register'])){
         $emaildomain = substr(strrchr($email, "@"), 1);
 
         if (!in_array($emaildomain, $allowed_domains)) {
-            header("Location: form_user.php?msg=5"); // Domínio de e-mail não permitido
+            header("Location: ../forms/form_user.php?msg=5"); // Domínio de e-mail não permitido
             exit();
         }
 
         if (!empty($password) || !empty($repeat_password)) {
             if ($password != $repeat_password) {
-                header("Location: form_user.php?msg=2"); // Senhas não coincidem
+                header("Location: ../forms/form_user.php?msg=2"); // Senhas não coincidem
                 exit();
             }
             $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
             // Adicione a password no UPDATE
             $update = $conect->prepare("UPDATE usuario SET nome = ?, email = ?, senha = ?, tipo = ? WHERE id_user = ?");
-            $update->bind_param("sssii", $name, $email, $encrypted_password, $type, $_SESSION['id_user']);
+            $update->bind_param("sssii", $name, $email, $encrypted_password, $type, $id_user);
         
         } else {
-            $update = $conect->prepare("UPDATE usuario SET nome = ?, email = ?, type = ? WHERE id_user = ?");
-            $update->bind_param("ssii", $name, $email, $type, $_SESSION['id_user']);
+            $update = $conect->prepare("UPDATE usuario SET nome = ?, email = ?, tipo = ? WHERE id_user = ?");
+            $update->bind_param("ssii", $name, $email, $type, $id_user);
         }
 
         if ($update->execute()) {
-            header("Location: central.php?msg=6"); // Alteração realizada com sucesso
+            header("Location: ../central.php?msg=6"); // Alteração realizada com sucesso
             exit();
         } else {
             echo mysqli_errno($conect) . ": " . mysqli_error($conect);
             die();
         }
     } else {
-        header("Location: ../forms/form_user.php?msg=1"); // Campos obrigatórios não preenchidos
+        header("Location: ../forms/form_user.php?id_user=$id_user&msg=1"); // Campos obrigatórios não preenchidos
         exit();
     }
 

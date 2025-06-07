@@ -1,5 +1,6 @@
 <?php
-include_once('./control.php');
+include_once('../control.php');
+
 if(isset($_SESSION['type']) && $_SESSION['type'] == 4){
     // listar usuários
     $query = $conect->prepare("SELECT * FROM usuario");
@@ -16,7 +17,7 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == 4){
         die();
     }
 } else {
-    header('Location: central.php?msg=não autorizado');
+    header('Location: ../central.php?msg=não autorizado');
     exit();
 }
 
@@ -30,20 +31,38 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == 4){
     <title>Portal de Bolsas do CCNE</title>
 </head>
 <body>
-    
+    <tr>
+        <td>Id</td>
+        <td>Nome</td>
+        <td>Email</td>
+        <td>Tipo</td>
+        <td>Opções</td>
+    </tr>
+    <br>
+    <?php while ($user = $result->fetch_assoc()): ?>
+        <tr>
+            <td> <?= $user['id_user'] ?> </td>
+            <td> <?= htmlspecialchars($user['nome']) ?> </td>
+            <td> <?= htmlspecialchars($user['email']) ?> </td>
+            <td>
+                <?php switch ($user['tipo']) : 
+                    case 0: echo "Estudante"; break;
+                    case 1: echo "Orientador"; break; 
+                    case 2: echo "Direção"; break; 
+                    case 3: echo "Financeiro"; break; 
+                    case 4: echo "Gerente Master"; break; 
+                endswitch;
+                ?> 
+            </td>
+            <td>
+                <a href='../forms/form_user.php?id_user=<?= $user['id_user']; ?>'>Editar Usuário</a>
+                <form action='../processes/process_user.php' method='post' style='display:inline;'>
+                    <input type='hidden' name='id_user' value='<?= $user['id_user']; ?>'>
+                    <button type='submit' name='delete'>Excluir</button>
+                </form>
+            </td>
+        </tr>
+        <br>
+    <?php endwhile; ?>
 </body>
 </html>
-<?php while ($usuario = $result->fetch_assoc()): ?>
-    <tr>
-        <td> <?php $usuario['id_usuario'] ?> </td>
-        <td> <?php $usuario['nome'] ?> </td>
-        <td> <?php $usuario['email'] ?> </td>
-        <td>
-            <a href='editar_user.php?id= <?php $usuario['id_usuario'] ?>'>Editar</a>
-            <form action='excluir_user.php' method='post' style='display:inline;'>
-                <input type='hidden' name='id_usuario' value='<?php $usuario['id_usuario'] ?>'>
-                <button type='submit' name='excluir'>Excluir</button>
-            </form>
-        </td>
-    </tr>
-<?php endwhile; ?>
