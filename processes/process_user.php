@@ -52,7 +52,7 @@ if (isset($_POST['register'])){
 
         if ($insert->execute()) {
             if (isset($_SESSION) && $_SESSION['type'] == 4) {
-                // Redirecionar o gerente para algum lugar específico
+                header("Location: ../central.php?msg=1"); // Cadastro realizado com sucesso (gerente)
             } else {
                 header("Location: ../index.php?msg=1"); // Cadastro realizado com sucesso, redireciona para a página de login
                 exit();
@@ -68,18 +68,20 @@ if (isset($_POST['register'])){
 } else if (isset($_POST['edit'])){
     include_once("../control.php");
 
-    $id_user = $_POST['id'];
+    $id_user = intval($_POST['id']);
     $name = $_POST['name'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $repeat_password = $_POST['repeat_password'];
-    $type = isset($_POST['type']) ? intval($_POST['type']) : null;
+    $type = $_POST['type'];
 
-    if(!empty($name) && !empty($email) && !empty($type)) {
+    if(!empty($id_user) && !empty($name) && !empty($email) && $type != null && $type != '') {
         // Verifica se os campos obrigatórios estão preenchidos
 
+        $type = intval($type);
+
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: ../forms/form_user.php?msg=4"); // E-mail inválido
+            header("Location: ../forms/form_user.php??id_user=$id_user&msg=4"); // E-mail inválido
             exit();
         }
 
@@ -87,17 +89,20 @@ if (isset($_POST['register'])){
         $emaildomain = substr(strrchr($email, "@"), 1);
 
         if (!in_array($emaildomain, $allowed_domains)) {
-            header("Location: ../forms/form_user.php?msg=5"); // Domínio de e-mail não permitido
+            header("Location: ../forms/form_user.php??id_user=$id_user&msg=5"); // Domínio de e-mail não permitido
             exit();
         }
 
         if (!empty($password) || !empty($repeat_password)) {
+            // Caso o usuário deseja alterar a senha também.
             if ($password != $repeat_password) {
-                header("Location: ../forms/form_user.php?msg=2"); // Senhas não coincidem
+                header("Location: ../forms/form_user.php??id_user=$id_user&msg=2"); // Senhas não coincidem
                 exit();
             }
+
             $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
-            // Adicione a password no UPDATE
+
+            // Adicione a senha no UPDATE
             $update = $conect->prepare("UPDATE usuario SET nome = ?, email = ?, senha = ?, tipo = ? WHERE id_user = ?");
             $update->bind_param("sssii", $name, $email, $encrypted_password, $type, $id_user);
         
@@ -114,7 +119,8 @@ if (isset($_POST['register'])){
             die();
         }
     } else {
-        header("Location: ../forms/form_user.php?id_user=$id_user&msg=1"); // Campos obrigatórios não preenchidos
+        var_dump($_POST);
+        //header("Location: ../forms/form_user.php?id_user=$id_user&msg=1"); // Campos obrigatórios não preenchidos
         exit();
     }
 
@@ -125,7 +131,7 @@ if (isset($_POST['register'])){
         // Verifica se o usuário é gerente e pode excluir outros usuários
         $id_user = $_POST['id_user'] ?? null;
         if (empty($id_user)) {
-            header("Location: ../list_users?msg=1");  //ID do usuário não encontrado
+            header("Location: ../list_user?msg=1");  //ID do usuário não encontrado
             exit();
         }
 
@@ -133,14 +139,14 @@ if (isset($_POST['register'])){
         $delete->bind_param("i", $id_user);
 
         if ($delete->execute()) {
-            header("Location: ../list_users?msg=2"); // Exclusão realizada com sucesso
+            header("Location: ../list_user?msg=2"); // Exclusão realizada com sucesso
             exit();
         } else {
             echo mysqli_errno($conect) . ": " . mysqli_error($conect);
             die();
         }
     } else {
-        header("Location: ../list_users?msg=3"); // Usuário não autorizado a excluir outros usuários
+        header("Location: ../list_user?msg=3"); // Usuário não autorizado a excluir outros usuários
         exit();
     }
 }

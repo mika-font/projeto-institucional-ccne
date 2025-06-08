@@ -1,6 +1,5 @@
 <?php
-echo ("Hello");
-include_once('./control.php');
+    include_once('./control.php');
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">

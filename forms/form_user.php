@@ -1,30 +1,30 @@
 <?php
-session_start();
-include_once("../conect.php");
-$conect = conectServer();
+    session_start();
+    include_once("../conect.php");
+    $conect = conectServer();
 
-$edit_mode = false;
-$user_editing = null;
+    $edit_mode = false;
+    $user_editing = null;
 
-if (isset($_SESSION['type']) && isset($_GET['id_user'])) {
-    $id_user = intval($_GET['id_user']);
+    if (isset($_SESSION['type']) && isset($_GET['id_user'])) {
+        $id_user = intval($_GET['id_user']);
 
-    $query = $conect->prepare("SELECT * FROM usuario WHERE id_user = ?");
-    $query->bind_param("i", $id_user);
-    $query->execute();
-    $result = $query->get_result();
+        $query = $conect->prepare("SELECT * FROM usuario WHERE id_user = ?");
+        $query->bind_param("i", $id_user);
+        $query->execute();
+        $result = $query->get_result();
 
-    if ($result->num_rows === 1) {
-        $user_editing = $result->fetch_assoc();
-        $edit_mode = true;
+        if ($result->num_rows === 1) {
+            $user_editing = $result->fetch_assoc();
+            $edit_mode = true;
+        }
     }
-}
 
-// Define os valores a serem preenchidos no formulário
-$name = $user_editing['nome'] ?? '';
-$email = $user_editing['email'] ?? '';
-$type = $user_editing['tipo'] ?? '';
-$id_user = $user_editing['id_user'] ?? null;
+    // Define os valores a serem preenchidos no formulário
+    $id_user = $user_editing['id_user'] ?? null;
+    $name = $user_editing['nome'] ?? '';
+    $email = $user_editing['email'] ?? '';
+    $type = $user_editing['tipo'] ?? '';
 
 ?>
 <!DOCTYPE html>
@@ -55,22 +55,28 @@ $id_user = $user_editing['id_user'] ?? null;
 
                 <label for="repeat_password">Repetir Senha:</label>
                 <input type="password" id="repeat_password" name="repeat_password"><br>
+
             <?php else: ?>
+
                 <label for="password">Senha:</label>
                 <input type="password" id="password" name="password" required><br>
 
                 <label for="repeat_password">Repetir Senha:</label>
                 <input type="password" id="repeat_password" name="repeat_password" required><br>
+
             <?php endif; ?>
 
             <?php if (isset($_SESSION['type']) && $_SESSION['type'] == 4) : ?>
+
                 <label for="type">Tipo de Usuário:</label>
                 <select id="type" name="type">
+                    <option value = "4" <?= $type == 4 ? 'selected' : '' ?>>Gerente</option>
                     <option value = "3" <?= $type == 3 ? 'selected' : '' ?>>Financeiro</option>
-                    <option value = "1" <?= $type == 1 ? 'selected' : '' ?>>Orientador</option>
                     <option value = "2" <?= $type == 2 ? 'selected' : '' ?>>Direção</option>
+                    <option value = "1" <?= $type == 1 ? 'selected' : '' ?>>Orientador</option>
                     <option value = "0" <?= $type == 0 ? 'selected' : '' ?>>Estudante</option>
                 </select>
+                
             <?php elseif(isset($_SESSION['type'])): ?>
                 <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
             <?php else: ?>
