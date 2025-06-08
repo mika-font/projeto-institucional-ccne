@@ -5,7 +5,7 @@
     if (!isset($_SESSION['email']) || !isset($_SESSION['id_user']) || !isset($_SESSION['type']) || !isset($_SESSION['last_access'])) {
         session_unset();
         session_destroy();
-        header('Location: index.php?msg=nao_autorizado');
+        header('Location: ./index.php?msg=nao_autorizado');
         exit();
     }
 
@@ -18,7 +18,7 @@
         if ($idle_time > $timeout) {
             session_unset();
             session_destroy();
-            header('Location: index.php?msg=timeout');
+            header('Location: ./index.php?msg=timeout');
             exit();
         }
     }

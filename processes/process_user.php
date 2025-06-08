@@ -131,7 +131,7 @@ if (isset($_POST['register'])){
         // Verifica se o usuário é gerente e pode excluir outros usuários
         $id_user = $_POST['id_user'] ?? null;
         if (empty($id_user)) {
-            header("Location: ../list_user?msg=1");  //ID do usuário não encontrado
+            header("Location: ../list_user.php?msg=1");  //ID do usuário não encontrado
             exit();
         }
 
@@ -139,14 +139,14 @@ if (isset($_POST['register'])){
         $delete->bind_param("i", $id_user);
 
         if ($delete->execute()) {
-            header("Location: ../list_user?msg=2"); // Exclusão realizada com sucesso
+            header("Location: ../list_user.php?msg=2"); // Exclusão realizada com sucesso
             exit();
         } else {
             echo mysqli_errno($conect) . ": " . mysqli_error($conect);
             die();
         }
     } else {
-        header("Location: ../list_user?msg=3"); // Usuário não autorizado a excluir outros usuários
+        header("Location: ../list_user.php?msg=3"); // Usuário não autorizado a excluir outros usuários
         exit();
     }
 }

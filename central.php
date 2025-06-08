@@ -14,6 +14,8 @@
     <a href="./forms/form_user.php?id_user=<?= $_SESSION['id_user']; ?>">Editar conta</a>
     <?php if ($_SESSION['type'] == 4): ?>
         <a href="./lists/list_user.php">Listar Usuários</a>
+        <a href="./lists/list_course.php">Listar Cursos</a>
+        <a href="./lists/list_subunit.php">Listar Subunidades</a>
     <?php endif; ?>
 </body>
 </html>
