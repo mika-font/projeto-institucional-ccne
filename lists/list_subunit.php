@@ -27,6 +27,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <title>Portal de Bolsas do CCNE</title>
 </head>
 <body>
@@ -43,7 +44,7 @@
             <td> <?= htmlspecialchars($sub['nome']) ?> </td>
             <td> <?= htmlspecialchars($sub['codigo']) ?> </td>
             <td>
-                <a href='../forms/form_subunit.php?id_sub=<?= $sub['id_subunidade']; ?>'>Editar Curso</a>
+                <a href='../forms/form_subunit.php?id_sub=<?= $sub['id_subunidade']; ?>'>Editar Subunidade</a>
                 <form action='../processes/process_subunit.php' method='post' style='display:inline;'>
                     <input type='hidden' name='id_sub' value='<?= $sub['id_subunidade']; ?>'>
                     <button type='submit' name='delete'>Excluir</button>
@@ -52,5 +53,7 @@
         </tr>
         <br>
     <?php endwhile; ?>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

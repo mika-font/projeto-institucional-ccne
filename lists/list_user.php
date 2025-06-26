@@ -28,6 +28,7 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == 4){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <title>Portal de Bolsas do CCNE</title>
 </head>
 <body>
@@ -64,5 +65,6 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == 4){
         </tr>
         <br>
     <?php endwhile; ?>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

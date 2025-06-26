@@ -4,7 +4,7 @@ include_once('../control.php');
 $edit_mode = false;
 $editing = null;
 
-if (isset($_SESSION['type']) && $_SESSION['type'] == 4 || $_SESSION['type'] == 2 && isset($_GET['id_bag'])) {
+if (isset($_SESSION['type']) && in_array($_SESSION['type'], [4, 2]) && isset($_GET['id_bag'])) {
     $id_bag = $_GET['id_bag'];
 
     $query = $conect->prepare("SELECT * FROM bolsa WHERE id_bolsa = ?");
@@ -16,14 +16,11 @@ if (isset($_SESSION['type']) && $_SESSION['type'] == 4 || $_SESSION['type'] == 2
         $editing = $result->fetch_assoc();
         $edit_mode = true;
     }
-} else {
-    header("Location: ../central.php?msg=10"); // msg=10: Acesso não autorizado
-    exit();
 }
 
-$id_bag = $editing['id_bolsa'] ?? null;
+$id_bag = $editing['id_bolsa'] ?? NULL;
 $id_subunit = $editing['id_subunidade'] ?? '';
-$id_subunit_allocation = $bolsa_editing['id_subunidade_alocacao'] ?? ''; // Campo novo
+$id_subunit_allocation = $editing['id_subunidade_alocacao'] ?? '';
 $code = $editing['codigo'] ?? '';
 $name = $editing['nome'] ?? '';
 $description = $editing['descricao'] ?? '';
@@ -34,8 +31,7 @@ $location = $editing['localizacao'] ?? '';
 $link_file = $editing['arquivo'] ?? '';
 
 $subunits_result = $conect->query("SELECT id_subunidade, nome FROM subunidade ORDER BY nome ASC");
-$subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunidade ORDER BY nome ASC");
-
+$subunits_allocation = $conect->query("SELECT id_subunidade, nome FROM subunidade ORDER BY nome ASC");
 ?>
 
 <!DOCTYPE html>
@@ -44,8 +40,8 @@ $subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunid
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="./assets/icons/faviconccne.png" type="image/x-icon">
-    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <title>Portal de Bolsas CCNE</title>
 </head>
 
@@ -60,8 +56,8 @@ $subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunid
         <label for="name">Nome da Bolsa:</label>
         <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>" required><br>
 
-        <label for="subunit">Subunidade:</label>
-        <select id="subunit" name="id_subunit" required>
+        <label for="id_subunit">Subunidade:</label>
+        <select id="id_subunit" name="id_subunit" required>
             <option value="">Selecione uma subunidade</option>
             <?php
             if ($subunits_result->num_rows > 0) {
@@ -78,8 +74,8 @@ $subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunid
         <select id="id_subunit_allocation" name="id_subunit_allocation" required>
             <option value="">Selecione uma subunidade</option>
             <?php
-            if ($subunits_para_alocacao->num_rows > 0) {
-                while ($sub = $subunits_for_allocation->fetch_assoc()) {
+            if ($subunits_allocation->num_rows > 0) {
+                while ($sub = $subunits_allocation->fetch_assoc()) {
                     // Se estiver editando, seleciona a opção correta. Se estiver cadastrando e a de origem já foi escolhida, pode-se usar JS para pré-selecionar a mesma aqui.
                     $selected = ($sub['id_subunidade'] == $id_subunit_allocation) ? 'selected' : '';
                     echo "<option value=\"" . htmlspecialchars($sub['id_subunidade']) . "\" $selected>" . htmlspecialchars($sub['nome']) . "</option>";
@@ -98,10 +94,19 @@ $subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunid
         <input type="number" id="workload_limit" name="workload_limit" value="<?= htmlspecialchars($workload_limit) ?>" required><br>
 
         <label for="modality">Modalidade:</label>
-        <input type="text" id="modality" name="modality" value="<?= htmlspecialchars($modality) ?>" placeholder="Ex: Presencial, Remoto"><br>
+        <select id="modality" name="modality" required>
+            <option value="Monitoria"  <?= $modality == 'Monitoria'   ? 'selected' : '' ?>>Monitoria</option>
+            <option value="BAE/PRAE"   <?= $modality == 'BAE/PRAE'    ? 'selected' : '' ?>>BAE/PRAE</option>
+        </select><br>
 
         <label for="situation">Situação:</label>
-        <input type="text" id="situation" name="situation" value="<?= htmlspecialchars($situation) ?>" placeholder="Ex: Aberta, Encerrada"><br>
+        <select id="situation" name="situation" required>
+            <option value="Aberta para Inscrições"  <?= $situation == 'Aberta para Inscrições'   ? 'selected' : '' ?>>Aberta para Inscrições</option>
+            <option value="Em Seleção"              <?= $situation == 'Em Seleção'               ? 'selected' : '' ?>>Em Seleção</option>
+            <option value="Ativo"                   <?= $situation == 'Ativo'                    ? 'selected' : '' ?>>Ativo</option>
+            <option value="Inativar"                <?= $situation == 'Inativar'                 ? 'selected' : '' ?>>Inativar</option>
+            <option value="Inativo"                 <?= $situation == 'Inativo'                  ? 'selected' : '' ?>>Inativo</option>
+        </select><br>
 
         <label for="file">Link do Edital:</label>
         <input type="url" id="file" name="file" value="<?= htmlspecialchars($link_file) ?>" placeholder="https://site.ufsm.br/edital/123" style="width: 300px;"><br>
@@ -117,7 +122,7 @@ $subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunid
             <button type="submit" name="register">Cadastrar Bolsa</button>
         <?php endif; ?>
     </form>
-    <script src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

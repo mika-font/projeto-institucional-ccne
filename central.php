@@ -17,6 +17,9 @@
         <a href="./lists/list_user.php">Listar Usuários</a>
         <a href="./lists/list_course.php">Listar Cursos</a>
         <a href="./lists/list_subunit.php">Listar Subunidades</a>
+        <a href="./lists/list_bag.php">Listar Bolsas</a> <br>
+        <a href="./forms/form_bag.php">Cadastrar Bolsa</a>
+        <a href="./forms/form_subunit.php">Cadastrar Subunidade</a>
     <?php endif; ?>
     <script src="./assets/js/bootstrap.bundle.min.js"></script>
 </body>

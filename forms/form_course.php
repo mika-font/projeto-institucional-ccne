@@ -32,7 +32,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="./assets/icons/faviconccne.png" type="image/x-icon">
-    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <title>Portal de Bolsas CCNE</title>
 </head>
 <body>
@@ -54,7 +54,7 @@
         </select>
         <br>
 
-        <label for="turn">Campus:</label>
+        <label for="turn">Turno:</label>
         <select id="turn" name="turn">
             <option value = "Matutino"   <?= $turn == "Matutino"   ? 'selected' : '' ?>>Matutino</option>
             <option value = "Vespertino" <?= $turn == "Vespertino" ? 'selected' : '' ?>>Vespertino</option>
@@ -74,6 +74,6 @@
             <button type="submit" name="register">Cadastrar</button>
         <?php endif; ?>
     </form>
-    <script src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
