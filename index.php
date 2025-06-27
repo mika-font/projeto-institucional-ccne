@@ -58,6 +58,7 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['password
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="./assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
     <title>Portal de Bolsas CCNE</title>
 </head>
 <body>
@@ -76,5 +77,6 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['password
             <a href="./forms/form_user.php">Cadastrar</a>
         </form>
     </main>
+    <script src="./assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

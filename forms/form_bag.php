@@ -45,6 +45,7 @@ $subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunid
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="./assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
     <title>Portal de Bolsas CCNE</title>
 </head>
 
@@ -116,6 +117,8 @@ $subunits_for_alocacao = $conect->query("SELECT id_subunidade, nome FROM subunid
             <button type="submit" name="register">Cadastrar Bolsa</button>
         <?php endif; ?>
     </form>
+    <script src="./assets/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>
