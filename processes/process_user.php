@@ -1,6 +1,7 @@
 <?php
 
 if (isset($_POST['register'])){
+    session_start();
     include_once('../conect.php');
     $conect = conectServer();
 
@@ -8,8 +9,9 @@ if (isset($_POST['register'])){
     $email = $_POST['email'];
     $password = $_POST['password'];
     $repeat_password = $_POST['repeat_password'];
+    $type = $_POST['type'];
 
-    if (!empty($name) && !empty($email) && !empty($password) && !empty($repeat_password)) {
+    if (!empty($name) && !empty($email) && !empty($password) && !empty($repeat_password) && $type != NULL && $type != '') {
         // Verifica se os campos obrigatórios estão preenchidos
         
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -30,9 +32,8 @@ if (isset($_POST['register'])){
             exit();
         }
 
-        $type = 0; // Aluno por padrão
-        if (isset($_SESSION['type']) && $_SESSION['type'] == 4) {
-            $type = $_POST['type'];
+        if (!isset($_SESSION['type']) || $_SESSION['type'] != 4) {
+            $type = 0;
         }
 
         $stmt = $conect->prepare("SELECT id_user FROM usuario WHERE email = ?");
@@ -131,7 +132,7 @@ if (isset($_POST['register'])){
         // Verifica se o usuário é gerente e pode excluir outros usuários
         $id_user = $_POST['id_user'] ?? null;
         if (empty($id_user)) {
-            header("Location: ../list_user.php?msg=1");  //ID do usuário não encontrado
+            header("Location: ../lists/list_user.php?msg=1");  //ID do usuário não encontrado
             exit();
         }
 
@@ -139,14 +140,14 @@ if (isset($_POST['register'])){
         $delete->bind_param("i", $id_user);
 
         if ($delete->execute()) {
-            header("Location: ../list_user.php?msg=2"); // Exclusão realizada com sucesso
+            header("Location: ../lists/list_user.php?msg=2"); // Exclusão realizada com sucesso
             exit();
         } else {
             echo mysqli_errno($conect) . ": " . mysqli_error($conect);
             die();
         }
     } else {
-        header("Location: ../list_user.php?msg=3"); // Usuário não autorizado a excluir outros usuários
+        header("Location: ../lists/list_user.php?msg=3"); // Usuário não autorizado a excluir outros usuários
         exit();
     }
 }

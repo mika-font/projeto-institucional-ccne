@@ -1,9 +1,10 @@
 <?php
     include_once('../control.php');
-    // Funções do listar bolsas para Gerente e Direção:
-    // Listar todas as bolsas do sistema
-    // Listar todas as bolsas em cada situação
-    // Listar todas as bolsas de uma subunidade
+    // Funções do listar minhas bolsas para Estudante, Orientador e Financeiro:
+    // Listar todas as bolsas em que o estudante está inscrito
+    // Listar todas as bolsas em que o orientador é responsável
+    // Listar todas as bolsas em que o estudante é beneficiário
+    // Listar todas as bolsas em que o financeiro possui pendências
 
     if(isset($_SESSION['type']) && $_SESSION['type'] == 4) {
         $query = $conect->prepare("SELECT * FROM bolsa");

@@ -1,11 +1,11 @@
 <?php
     session_start();
-
+    define('BASE_URL', 'http://localhost/programacao/projeto-institucional-ccne/');
     // Verifica se o usuário está logado
     if (!isset($_SESSION['email']) || !isset($_SESSION['id_user']) || !isset($_SESSION['type']) || !isset($_SESSION['last_access'])) {
         session_unset();
         session_destroy();
-        header('Location: ./index.php?msg=nao_autorizado');
+        header('Location:'. BASE_URL .'index.php?msg=nao_autorizado');
         exit();
     }
 
@@ -18,7 +18,7 @@
         if ($idle_time > $timeout) {
             session_unset();
             session_destroy();
-            header('Location: ./index.php?msg=timeout');
+            header('Location: '. BASE_URL .'index.php?msg=timeout');
             exit();
         }
     }

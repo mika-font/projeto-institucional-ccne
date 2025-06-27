@@ -78,7 +78,7 @@
                     <option value = "0" <?= $type == 0 ? 'selected' : '' ?>>Estudante</option>
                 </select>
                 
-            <?php elseif(isset($_SESSION['type'])): ?>
+            <?php elseif(isset($_SESSION['type']) && $_SESSION['type'] != 4 && $edit_mode): ?>
                 <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
             <?php else: ?>
                 <input type="hidden" name="type" value = "0">
