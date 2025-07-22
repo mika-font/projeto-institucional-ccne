@@ -1,6 +1,6 @@
 <?php
     session_start();
-    define('BASE_URL', 'http://localhost/programacao/projeto-institucional-ccne/');
+    include_once('configs/rules.php');
     // Verifica se o usuário está logado
     if (!isset($_SESSION['email']) || !isset($_SESSION['id_user']) || !isset($_SESSION['type']) || !isset($_SESSION['last_access'])) {
         session_unset();
