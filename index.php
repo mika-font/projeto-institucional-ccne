@@ -1,7 +1,7 @@
 <?php 
-//tela de login
+include_once(__DIR__ . '/configs/configs.php');
 if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['password'])) {
-    include_once('conect.php');
+    include_once(__DIR__ . '/conect.php');
     $conect = conectServer();
     session_start();
 
