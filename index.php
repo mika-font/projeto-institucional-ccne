@@ -40,7 +40,7 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['password
         }
     }
 } else if (isset($_SESSION['email']) && isset($_SESSION['id_user']) && isset($_SESSION['type'])) {
-    header('Location: ' . BASE_URL . '/central.php');
+    header('Location: ' . BASE_URL . 'central.php');
     exit();
 }
 

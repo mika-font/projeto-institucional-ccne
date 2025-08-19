@@ -1,5 +1,5 @@
 <?php
-    include_once(__DIR__ . '/configs/configs.php');
+    include_once('./configs/rules.php');
     session_start();                 
     session_unset();
     session_destroy();

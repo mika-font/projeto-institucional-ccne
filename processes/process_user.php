@@ -1,9 +1,9 @@
 <?php
+include_once('../configs/rules.php');
+include_once('../conect.php');
+$conect = conectServer();
 
-if (isset($_POST['register'])){
-    session_start();
-    include_once('../conect.php');
-    $conect = conectServer();
+if (isset($_POST['register'])) {
 
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -11,144 +11,162 @@ if (isset($_POST['register'])){
     $repeat_password = $_POST['repeat_password'];
     $type = $_POST['type'];
 
-    if (!empty($name) && !empty($email) && !empty($password) && !empty($repeat_password) && $type != NULL && $type != '') {
-        // Verifica se os campos obrigatórios estão preenchidos
-        
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: ../forms/form_user.php?msg=4"); // E-mail inválido
-            exit();
-        }
-
-        $allowed_domains = ['ufsm.br', 'acad.ufsm.br'];
-        $emaildomain = substr(strrchr($email, "@"), 1);
-
-        if (!in_array($emaildomain, $allowed_domains)) {
-            header("Location: ../forms/form_user.php?msg=5"); // Domínio de e-mail não permitido
-            exit();
-        }
-
-        if($password != $repeat_password) {
-            header("Location: ../forms/form_user.php?msg=2"); // Senhas não coincidem
-            exit();
-        }
-
-        if (!isset($_SESSION['type']) || $_SESSION['type'] != 4) {
-            $type = 0;
-        }
-
-        $stmt = $conect->prepare("SELECT id_user FROM usuario WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows > 0) {
-            header("Location: ../forms/form_user.php?msg=3"); // E-mail já cadastrado
-            exit();
-        }
-
-        $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
-
-        $insert = $conect->prepare("INSERT INTO usuario (nome, email, senha, tipo) VALUES (?, ?, ?, ?)");
-        $insert->bind_param("sssi", $name, $email, $encrypted_password, $type);
-
-        if ($insert->execute()) {
-            if (isset($_SESSION) && $_SESSION['type'] == 4) {
-                header("Location: ../central.php?msg=1"); // Cadastro realizado com sucesso (gerente)
-            } else {
-                header("Location: ../index.php?msg=1"); // Cadastro realizado com sucesso, redireciona para a página de login
-                exit();
-            }
-        } else {
-            echo mysqli_errno($conect) . ": " . mysqli_error($conect);
-            die();
-        }
-    } else {
-        header("Location: ../forms/form_user.php?msg=1"); // Campos obrigatórios não preenchidos
+    if (empty($name) || empty($email) || empty($password)) {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=campos_vazios');
         exit();
     }
-} else if (isset($_POST['edit'])){
-    include_once("../control.php");
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=email_invalido');
+        exit();
+    }
+    $allowed_domains = ['ufsm.br', 'acad.ufsm.br'];
+    $email_domain = substr(strrchr($email, "@"), 1);
+    if (!in_array($email_domain, $allowed_domains)) {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=dominio_invalido');
+        exit();
+    }
+    if ($password !== $repeat_password) {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=senhas_nao_coincidem');
+        exit();
+    }
 
-    $id_user = intval($_POST['id']);
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $repeat_password = $_POST['repeat_password'];
-    $type = $_POST['type'];
-
-    if(!empty($id_user) && !empty($name) && !empty($email) && $type != null && $type != '') {
-        // Verifica se os campos obrigatórios estão preenchidos
-
+    if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE) {
         $type = intval($type);
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: ../forms/form_user.php??id_user=$id_user&msg=4"); // E-mail inválido
-            exit();
-        }
-
-        $allowed_domains = ['ufsm.br', 'acad.ufsm.br'];
-        $emaildomain = substr(strrchr($email, "@"), 1);
-
-        if (!in_array($emaildomain, $allowed_domains)) {
-            header("Location: ../forms/form_user.php??id_user=$id_user&msg=5"); // Domínio de e-mail não permitido
-            exit();
-        }
-
-        if (!empty($password) || !empty($repeat_password)) {
-            // Caso o usuário deseja alterar a senha também.
-            if ($password != $repeat_password) {
-                header("Location: ../forms/form_user.php??id_user=$id_user&msg=2"); // Senhas não coincidem
-                exit();
-            }
-
-            $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
-
-            // Adicione a senha no UPDATE
-            $update = $conect->prepare("UPDATE usuario SET nome = ?, email = ?, senha = ?, tipo = ? WHERE id_user = ?");
-            $update->bind_param("sssii", $name, $email, $encrypted_password, $type, $id_user);
-        
-        } else {
-            $update = $conect->prepare("UPDATE usuario SET nome = ?, email = ?, tipo = ? WHERE id_user = ?");
-            $update->bind_param("ssii", $name, $email, $type, $id_user);
-        }
-
-        if ($update->execute()) {
-            header("Location: ../central.php?msg=6"); // Alteração realizada com sucesso
-            exit();
-        } else {
-            echo mysqli_errno($conect) . ": " . mysqli_error($conect);
-            die();
-        }
     } else {
-        var_dump($_POST);
-        //header("Location: ../forms/form_user.php?id_user=$id_user&msg=1"); // Campos obrigatórios não preenchidos
+        $type = RULE_ESTUDANTE;
+    }
+
+    $stmt = $conect->prepare("SELECT id_usuario FROM usuario WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    if ($stmt->get_result()->num_rows > 0) {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=email_existente');
+        exit();
+    }
+    $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
+    $insert_user = $conect->prepare("INSERT INTO usuario (nome, email, senha, tipo) VALUES (?, ?, ?, ?)");
+    $insert_user->bind_param("sssi", $name, $email, $encrypted_password, $type);
+
+    if ($insert_user->execute()) {
+        if (isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE) {
+            header("Location: " . BASE_URL . "/lists/list_user.php?msg=cadastro_sucesso");
+        } else {
+            header("Location: " . BASE_URL . "/index.php?msg=cadastro_sucesso");
+        }
+        exit();
+    } else {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=erro_cadastro');
+        exit();
+    }
+} else if (isset($_POST['edit'])) {
+    include_once('../control.php');
+
+    $id_to_edit = intval($_POST['id']);
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $repeat_password = $_POST['repeat_password'];
+    $type = intval($_POST['type']);
+
+    if (!isset($_SESSION['id_user']) || ($_SESSION['id_user'] != $id_to_edit && $_SESSION['type'] != RULE_GERENTE)) {
+        header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
         exit();
     }
 
-} else if (isset($_POST['delete'])){
-    include_once("../control.php");
-    
-    if(isset($_SESSION['type']) && $_SESSION['type'] == 4) {
-        // Verifica se o usuário é gerente e pode excluir outros usuários
-        $id_user = $_POST['id_user'] ?? null;
-        if (empty($id_user)) {
-            header("Location: ../lists/list_user.php?msg=1");  //ID do usuário não encontrado
+    if (empty($id_to_edit) || empty($name) || empty($email) || ($type === null || $type === '')) {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=campos_vazios');
+        exit();
+    }
+
+    $allowed_domains = ['ufsm.br', 'acad.ufsm.br'];
+    $email_domain = substr(strrchr($email, "@"), 1);
+    if (!in_array($email_domain, $allowed_domains)) {
+        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=dominio_invalido');
+        exit();
+    }
+
+    $query_current_email = $conect->prepare("SELECT email FROM usuario WHERE id_usuario = ?");
+    $query_current_email->bind_param("i", $id_to_edit);
+    $query_current_email->execute();
+    $current_email = $query_current_email->get_result()->fetch_assoc()['email'];
+
+    if ($email !== $current_email) {
+        $check_stmt = $conect->prepare("SELECT id_usuario FROM usuario WHERE email = ? AND id_usuario != ?");
+        $check_stmt->bind_param("si", $email, $id_to_edit);
+        $check_stmt->execute();
+
+        if ($check_stmt->get_result()->num_rows > 0) {
+            header('Location: ' . BASE_URL . '/forms/form_user.php?id=' . $id_to_edit . '&msg=email_existente');
             exit();
         }
+    }
 
-        $delete = $conect->prepare("DELETE FROM usuario WHERE id_user = ?");
-        $delete->bind_param("i", $id_user);
+    $sql_parts = ["nome = ?", "email = ?", "tipo = ?"];
+    $params = [$name, $email, $type];
+    $types = "ssi";
 
-        if ($delete->execute()) {
-            header("Location: ../lists/list_user.php?msg=2"); // Exclusão realizada com sucesso
+    if (!empty($password)) {
+        if ($password !== $repeat_password) {
+            header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=senhas_nao_coincidem');
             exit();
-        } else {
-            echo mysqli_errno($conect) . ": " . mysqli_error($conect);
-            die();
         }
+        $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
+        $sql_parts[] = "senha = ?";
+        $params[] = $encrypted_password;
+        $types .= "s";
+    }
+
+    $params[] = $id_to_edit;
+    $types .= "i";
+
+    $sql = "UPDATE usuario SET " . implode(", ", $sql_parts) . " WHERE id_usuario = ?";
+    $update = $conect->prepare($sql);
+    $update->bind_param($types, ...$params);
+
+    if ($update->execute()) {
+        header("Location: " . BASE_URL . "/central.php?msg=alteracao_sucesso");
     } else {
-        header("Location: ../lists/list_user.php?msg=3"); // Usuário não autorizado a excluir outros usuários
+        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=erro_alteracao');
+    }
+    exit();
+} else if (isset($_POST['delete'])) {
+    include_once('../control.php');
+
+    $id_to_delete = $_POST['id_user'] ?? null;
+
+    // Somente Gerentes podem excluir, e não podem excluir a si mesmos
+    if (!isset($_SESSION['type']) || $_SESSION['type'] != RULE_GERENTE) {
+        header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
+        exit();
+    }
+    if ($_SESSION['id_user'] == $id_to_delete) {
+        header("Location: " . BASE_URL . "/lists/list_user.php?msg=erro_autoexclusao");
+        exit();
+    }
+    if (empty($id_to_delete)) {
+        header("Location: " . BASE_URL . "/lists/list_user.php?msg=id_invalido");
+        exit();
+    }
+
+    try {
+        $delete = $conect->prepare("DELETE FROM usuario WHERE id_usuario = ?");
+        $delete->bind_param("i", $id_to_delete);
+        $delete->execute();
+
+        if ($delete->affected_rows > 0) {
+            header("Location: " . BASE_URL . "/lists/list_user.php?msg=exclusao_sucesso");
+        } else {
+            header("Location: " . BASE_URL . "/lists/list_user.php?msg=usuario_nao_encontrado");
+        }
+        exit();
+    } catch (mysqli_sql_exception $e) {
+        // Erro 1451 é o código para violação de chave estrangeira (FK constraint)
+        if ($e->getCode() == 1451) {
+            header("Location: " . BASE_URL . "/lists/list_user.php?msg=erro_exclusao_vinculo");
+        } else {
+            // Outro erro de banco de dados
+            header("Location: " . BASE_URL . "/lists/list_user.php?msg=erro_banco");
+        }
         exit();
     }
 }
-?>
