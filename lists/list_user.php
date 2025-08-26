@@ -24,12 +24,13 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <title>Gerenciamento de Usuários - Portal de Bolsas</title>
+    <title>Portal de Bolsas CCNE</title>
 </head>
 <body>
     <div class="container mt-4">
         <h1>Gerenciamento de Usuários</h1>
         <p>Listagem de todos os usuários do sistema.</p>
+        <a href="../forms/form_user.php" class="btn btn-success mb-3">Adicionar Novo Usuário</a>
 
         <table class="table table-striped table-hover">
             <thead class="table-dark">

@@ -1,25 +1,15 @@
 <?php
-    include_once('../control.php');
+    include_once(__DIR__ . '/../configs/rules.php');
+    include_once(__DIR__ . '/../control.php');
 
-    if(isset($_SESSION['type']) && $_SESSION['type'] == 4){
-        $query = $conect->prepare("SELECT * FROM curso");
-        if(!$query){
-            echo "Erro na preparação: " . $conect->error;
-            die();
-        }
-
+    if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE){
+        $query = $conect->prepare("SELECT * FROM curso ORDER BY nome ASC");
         $query->execute();
         $result = $query->get_result();
-
-        if(!$result){
-            echo "Erro na execução: " . $conect->error;
-            die();
-        }
     } else {
-        header('Location: ../central.php?msg=não autorizado');
+        header('Location: ' . BASE_URL . '/central.php?msg=nao_autorizado');
         exit();
     }
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -28,51 +18,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <title>Portal de Bolsas do CCNE</title>
+    <title>Portal de Bolsas CCNE</title>
 </head>
 <body>
-    <tr>
-        <td>Id</td>
-        <td>Curso</td>
-        <td>Código</td>
-        <td>Campus</td>
-        <td>Turno</td>
-        <td>Opções</td>
-    </tr>
-    <br>
-    <?php while ($course = $result->fetch_assoc()): ?>
-        <tr>
-            <td> <?= $course['id_curso'] ?> </td>
-            <td> <?= htmlspecialchars($course['nome']) ?> </td>
-            <td> <?= htmlspecialchars($course['codigo']) ?> </td>
-            <td>
-                <?php switch ($course['campus']) : 
-                    case "Santa Maria":          echo "Santa Maria"; break;
-                    case "Frederico Westphalen": echo "Frederico Westphalen"; break; 
-                    case "Cachoeira do Sul":     echo "Cachoeira do Sul"; break; 
-                    case "Palmeira das Missões": echo "Palmeira das Missões"; break; 
-                endswitch;
-                ?> 
-            </td>
-            <td>
-                <?php switch ($course['turno']) : 
-                    case "Matutino":   echo "Matutino"; break;
-                    case "Vespertino": echo "Vespertino"; break; 
-                    case "Noturno":    echo "Noturno"; break; 
-                    case "Diurno":     echo "Diurno"; break; 
-                endswitch;
-                ?> 
-            </td>
-            <td>
-                <a href='../forms/form_course.php?id_course=<?= $course['id_curso']; ?>'>Editar Curso</a>
-                <form action='../processes/process_course.php' method='post' style='display:inline;'>
-                    <input type='hidden' name='id_course' value='<?= $course['id_curso']; ?>'>
-                    <button type='submit' name='delete'>Excluir</button>
-                </form>
-            </td>
-        </tr>
-        <br>
-    <?php endwhile; ?>
+    <div class="container mt-4">
+        <h1>Gerenciamento de Cursos</h1>
+        <p>Listagem de todos os cursos do sistema.</p>
+        <a href="../forms/form_course.php" class="btn btn-success mb-3">Adicionar Novo Curso</a>
+
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Curso</th>
+                    <th>Código</th>
+                    <th>Campus</th>
+                    <th>Turno</th>
+                    <th class="text-center">Opções</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($course = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $course['id_curso'] ?></td>
+                        <td><?= htmlspecialchars($course['nome']) ?></td>
+                        <td><?= htmlspecialchars($course['codigo']) ?></td>
+                        <td><?= htmlspecialchars($course['campus']) ?></td>
+                        <td><?= htmlspecialchars($course['turno']) ?></td>
+                        <td class="text-center">
+                            <a href='../forms/form_course.php?id_course=<?= $course['id_curso']; ?>' class="btn btn-sm btn-primary">Editar</a>
+                            
+                            <form action='../processes/process_course.php' method='post' style='display:inline;' onsubmit="return confirm('Tem certeza que deseja excluir este curso? Alunos vinculados a ele impedirão a exclusão.');">
+                                <input type='hidden' name='id_course' value='<?= $course['id_curso']; ?>'>
+                                <button type='submit' name='delete' class="btn btn-sm btn-danger">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+        <a href="../central.php" class="btn btn-secondary">Voltar</a>
+    </div>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

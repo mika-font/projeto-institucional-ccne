@@ -9,7 +9,7 @@ if (isset($_POST['register'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $repeat_password = $_POST['repeat_password'];
-    $type = $_POST['type'];
+    $type = intval($_POST['type']);
 
     if (empty($name) || empty($email) || empty($password)) {
         header('Location: ' . BASE_URL . '/forms/form_user.php?msg=campos_vazios');
@@ -28,12 +28,6 @@ if (isset($_POST['register'])) {
     if ($password !== $repeat_password) {
         header('Location: ' . BASE_URL . '/forms/form_user.php?msg=senhas_nao_coincidem');
         exit();
-    }
-
-    if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE) {
-        $type = intval($type);
-    } else {
-        $type = RULE_ESTUDANTE;
     }
 
     $stmt = $conect->prepare("SELECT id_usuario FROM usuario WHERE email = ?");
