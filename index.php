@@ -166,24 +166,4 @@ if (isset($_GET['msg'])) {
         });
     </script>
 </body>
-
-<!--<body>
-    <main>
-        <form action="<$_SERVER['PHP_SELF']; ?>" method="post">
-            <h1>Login</h1>
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email" required><br> 
-
-            <label for="password">Senha:</label>
-            <input type="password" id="password" name="password" required><br>
-            
-            <a href="./forms/form_recover_password.php">Esqueci minha senha</a><br>
-            <button type="submit" name="login">Entrar</button><br>
-            
-            <a href="./forms/form_user.php">Cadastrar</a>
-        </form>
-    </main>
-    <script src="./assets/js/bootstrap.bundle.min.js"></script>
-</body>-->
-
 </html>

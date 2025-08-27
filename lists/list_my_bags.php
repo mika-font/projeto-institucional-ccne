@@ -1,13 +1,10 @@
 <?php
-    include_once('../control.php');
-    // Funções do listar minhas bolsas para Estudante, Orientador e Financeiro:
-    // Listar todas as bolsas em que o estudante está inscrito
-    // Listar todas as bolsas em que o orientador é responsável
-    // Listar todas as bolsas em que o estudante é beneficiário
-    // Listar todas as bolsas em que o financeiro possui pendências
+include_once(__DIR__ . '/../configs/rules.php');
+include_once(__DIR__ . '/../control.php');
 
+// Apenas Estudante, Orientador e Financeiro podem acessar esta página
 if (!isset($_SESSION['type']) || !in_array($_SESSION['type'], [RULE_ESTUDANTE, RULE_ORIENTADOR, RULE_FINANCEIRO])) {
-    header("Location: " . BASE_URL . "/central.php?msg=10"); // Acesso não autorizado
+    header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
     exit();
 }
 
@@ -15,41 +12,40 @@ $user_type = $_SESSION['type'];
 $user_id = $_SESSION['id_user'];
 $page_title = "";
 $result = null;
+$query = null;
 
 switch ($user_type) {
-    // Caso 1: ORIENTADOR - Listar bolsas pelas quais ele é responsável
+
+    // CASO ORIENTADOR: Listar bolsas pelas quais ele é responsável
     case RULE_ORIENTADOR:
-        $page_title = "Minhas Bolsas como Orientador";
+        $page_title = "Minhas Bolsas (Orientador)";
         $query = $conect->prepare(
-            "SELECT b.*, s.nome AS nome_subunidade 
-             FROM bolsa AS b 
-             LEFT JOIN subunidade AS s ON b.id_subunidade = s.id_subunidade
-             WHERE b.id_orientador = ?"
+            "SELECT id_bolsa, nome, situacao FROM bolsa WHERE id_orientador = ? ORDER BY nome ASC"
         );
         $query->bind_param("i", $user_id);
         break;
 
-    // Caso 0: ESTUDANTE - Listar bolsas nas quais ele se inscreveu
+    // CASO ESTUDANTE: Listar bolsas nas quais ele se inscreveu
     case RULE_ESTUDANTE:
         $page_title = "Minhas Inscrições em Bolsas";
         $query = $conect->prepare(
-            "SELECT b.id_bolsa, b.nome, b.situacao AS situacao_bolsa, c.data_hora, c.situacao AS situacao_inscricao
+            "SELECT b.id_bolsa, b.nome AS nome_bolsa, i.data_inscricao, i.situacao AS situacao_inscricao
              FROM bolsa AS b
-             JOIN candidato AS c ON b.id_bolsa = c.id_bolsa
-             WHERE c.id_usuario = ?"
+             JOIN inscricao AS i ON b.id_bolsa = i.id_bolsa
+             WHERE i.id_estudante = ? ORDER BY i.data_inscricao DESC"
         );
         $query->bind_param("i", $user_id);
         break;
 
-    // Caso 3: FINANCEIRO - Listar bolsas com pendências financeiras
+    // CASO FINANCEIRO: Listar bolsas com pendências financeiras
     case RULE_FINANCEIRO:
         $page_title = "Bolsas com Pendências Financeiras";
-        $status_para_ativar = "Pendente de Ativação (Financeiro)";
-        $status_para_desativar = "Pendente de Desativação (Financeiro)";
+        $status_activate = "Pendente de Ativação (Financeiro)";
+        $status_disable = "Pendente de Desativação (Financeiro)";
         $query = $conect->prepare(
-            "SELECT id_bolsa, nome, situacao FROM bolsa WHERE situacao IN (?, ?)"
+            "SELECT id_bolsa, nome, codigo, situacao FROM bolsa WHERE situacao IN (?, ?)"
         );
-        $query->bind_param("ss", $status_para_ativar, $status_para_desativar);
+        $query->bind_param("ss", $status_activate, $status_disable);
         break;
 }
 
@@ -70,65 +66,66 @@ if (isset($query)) {
     <title>Portal de Bolsas CCNE</title>
 </head>
 <body>
-    <header>
-        <h1><?= $page_title ?></h1>
-    </header>
-    <main>
-        <table border="1" style="width:100%; border-collapse: collapse;">
-            
-            <thead>
-                <?php if ($user_type == RULE_ORIENTADOR): ?>
-                    <tr>
-                        <th>Nome da Bolsa</th>
-                        <th>Situação da Bolsa</th>
-                        <th>Ações</th>
-                    </tr>
-                <?php elseif ($user_type == RULE_ESTUDANTE): ?>
-                    <tr>
-                        <th>Nome da Bolsa</th>
-                        <th>Data da Inscrição</th>
-                        <th>Situação da Inscrição</th>
-                        <th>Ações</th>
-                    </tr>
-                <?php elseif ($user_type == RULE_FINANCEIRO): ?>
-                    <tr>
-                        <th>Nome da Bolsa</th>
-                        <th>Código</th>
-                        <th>Situação da Bolsa</th>
-                        <th>Ações</th>
-                    </tr>
-                <?php endif; ?>
-            </thead>
-
-            <tbody>
-                <?php if ($result && $result->num_rows > 0): ?>
-                    <?php while ($bag = $result->fetch_assoc()): ?>
+    <div class="container mt-4">
+        <h1 class="mb-4"><?= $page_title ?></h1>
+        
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead class="table-dark">
+                    <?php if ($user_type == RULE_ORIENTADOR): ?>
                         <tr>
-                            <?php if ($user_type == RULE_ORIENTADOR): ?>
-                                <td><?= htmlspecialchars($bag['nome']) ?></td>
-                                <td><?= htmlspecialchars($bag['situacao']) ?></td>
-                                <td><a href="list_candidates.php?id_bolsa=<?= $bag['id_bolsa'] ?>">Ver Candidatos</a></td>
-                            <?php elseif ($user_type == RULE_ESTUDANTE): ?>
-                                <td><?= htmlspecialchars($bag['nome']) ?></td>
-                                <td><?= (new DateTime($bag['data_hora']))->format('d/m/Y H:i') ?></td>
-                                <td><?= htmlspecialchars($bag['situacao_inscricao']) ?></td>
-                                <td><a href="../details/details_bag.php?id_bolsa=<?= $bag['id_bolsa'] ?>">Ver Bolsa</a></td>
-                            <?php elseif ($user_type == RULE_FINANCEIRO): ?>
-                                <td><?= htmlspecialchars($bag['nome']) ?></td>
-                                <td><?= htmlspecialchars($bag['codigo']) ?></td>
-                                <td><?= htmlspecialchars($bag['situacao']) ?></td>
-                                <td><a href="../details/details_bag.php?id_bolsa=<?= $bag['id_bolsa'] ?>">Ver Bolsa</a></td>
-                            <?php endif; ?>
+                            <th>Nome da Bolsa</th>
+                            <th>Situação da Bolsa</th>
+                            <th class="text-center">Ações</th>
                         </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="4" style="text-align:center;">Nenhum item encontrado.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </main>
+                    <?php elseif ($user_type == RULE_ESTUDANTE): ?>
+                        <tr>
+                            <th>Nome da Bolsa</th>
+                            <th>Data da Inscrição</th>
+                            <th>Situação da Inscrição</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    <?php elseif ($user_type == RULE_FINANCEIRO): ?>
+                        <tr>
+                            <th>Nome da Bolsa</th>
+                            <th>Código</th>
+                            <th>Pendência</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    <?php endif; ?>
+                </thead>
+                <tbody>
+                    <?php if ($result && $result->num_rows > 0): ?>
+                        <?php while ($item = $result->fetch_assoc()): ?>
+                            <tr>
+                                <?php if ($user_type == RULE_ORIENTADOR): ?>
+                                    <td><?= htmlspecialchars($item['nome']) ?></td>
+                                    <td><?= htmlspecialchars($item['situacao']) ?></td>
+                                    <td class="text-center"><a href="../details/details_bag.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
+                                    <td class="text-center"><a href="list_candidates.php?id_bolsa=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-info">Ver Candidatos</a></td>
+                                <?php elseif ($user_type == RULE_ESTUDANTE): ?>
+                                    <td><?= htmlspecialchars($item['nome_bolsa']) ?></td>
+                                    <td><?= (new DateTime($item['data_inscricao']))->format('d/m/Y H:i') ?></td>
+                                    <td><strong><?= htmlspecialchars($item['situacao_inscricao']) ?></strong></td>
+                                    <td class="text-center"><a href="../details/details_bag.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
+                                <?php elseif ($user_type == RULE_FINANCEIRO): ?>
+                                    <td><?= htmlspecialchars($item['nome']) ?></td>
+                                    <td><?= htmlspecialchars($item['codigo_bolsa']) ?></td>
+                                    <td><?= htmlspecialchars($item['situacao']) ?></td>
+                                    <td class="text-center"><a href="../forms/form_manage_pendency.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-warning">Resolver Pendência</a></td>
+                                <?php endif; ?>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="4" class="text-center">Nenhum item encontrado.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <a href="../central.php" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
