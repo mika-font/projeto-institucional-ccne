@@ -58,6 +58,7 @@ if (isset($query)) {
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,10 +66,11 @@ if (isset($query)) {
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <title>Portal de Bolsas CCNE</title>
 </head>
+
 <body>
     <div class="container mt-4">
         <h1 class="mb-4"><?= $page_title ?></h1>
-        
+
         <div class="table-responsive">
             <table class="table table-striped table-hover table-bordered">
                 <thead class="table-dark">
@@ -76,21 +78,25 @@ if (isset($query)) {
                         <tr>
                             <th>Nome da Bolsa</th>
                             <th>Situação da Bolsa</th>
-                            <th class="text-center">Ações</th>
+                            <td class="text-center">
+                                <a href="../details/details_bag.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a>
+                                <a href="list_candidates.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-info">Ver Candidatos</a>
+                            </td>
                         </tr>
                     <?php elseif ($user_type == RULE_ESTUDANTE): ?>
                         <tr>
                             <th>Nome da Bolsa</th>
                             <th>Data da Inscrição</th>
                             <th>Situação da Inscrição</th>
-                            <th class="text-center">Ações</th>
+                            <td><strong><?= htmlspecialchars($item['situacao_inscricao']) ?></strong></td>
+                            <td class="text-center"><a href="../details/details_bag.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
                         </tr>
                     <?php elseif ($user_type == RULE_FINANCEIRO): ?>
                         <tr>
                             <th>Nome da Bolsa</th>
                             <th>Código</th>
                             <th>Pendência</th>
-                            <th class="text-center">Ações</th>
+                            <td class="text-center"><a href="../forms/form_manage_pendency.php?id=<?= $item['id'] ?>" class="btn btn-sm btn-warning">Resolver Pendência</a></td>
                         </tr>
                     <?php endif; ?>
                 </thead>
@@ -128,4 +134,5 @@ if (isset($query)) {
     </div>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

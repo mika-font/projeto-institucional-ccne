@@ -87,7 +87,7 @@ $situations_list = [
             <p>Listagem de todas as bolsas do sistema.</p>
             <a href="../forms/form_bag.php" class="btn btn-success">Adicionar Nova Bolsa</a>
         </div>
-        
+
         <div class="card mb-4">
             <div class="card-header">Filtros de Busca</div>
             <div class="card-body">
@@ -145,6 +145,7 @@ $situations_list = [
                             <td><?= htmlspecialchars($bag['carga_horaria']) ?>h</td>
                             <td><?= htmlspecialchars($bag['situacao']) ?></td>
                             <td class="text-center">
+                                <a href="../details/details_bag.php?id_bag=<?= $bag['id_bolsa']; ?>" class="btn btn-sm btn-info">Detalhes</a>
                                 <a href="../forms/form_bag.php?id_bag=<?= $bag['id_bolsa']; ?>" class="btn btn-sm btn-primary">Editar</a>
                                 <form action='../processes/process_bag.php' method='post' class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta bolsa?');">
                                     <input type='hidden' name='id_bag' value='<?= $bag['id_bolsa']; ?>'>
@@ -164,4 +165,5 @@ $situations_list = [
     </div>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
