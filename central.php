@@ -92,7 +92,7 @@ if (isset($_GET['msg'])) {
                         </div>
                         <div class="card-body">
                             <p class="card-text">Veja todas as bolsas com inscrições abertas.</p>
-                            <a href="./lists/list_open_bags.php" class="btn btn-primary">Ver Bolsas Abertas</a>
+                            <a href="./lists/list_my_bags.php" class="btn btn-primary">Ver Bolsas Abertas</a>
                         </div>
                     </div>
                 </div>

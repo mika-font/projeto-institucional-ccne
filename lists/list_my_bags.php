@@ -78,25 +78,21 @@ if (isset($query)) {
                         <tr>
                             <th>Nome da Bolsa</th>
                             <th>Situação da Bolsa</th>
-                            <td class="text-center">
-                                <a href="../details/details_bag.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a>
-                                <a href="list_candidates.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-info">Ver Candidatos</a>
-                            </td>
+                            <th colspan="2" class="text-center">Ações</th>
                         </tr>
                     <?php elseif ($user_type == RULE_ESTUDANTE): ?>
                         <tr>
                             <th>Nome da Bolsa</th>
                             <th>Data da Inscrição</th>
                             <th>Situação da Inscrição</th>
-                            <td><strong><?= htmlspecialchars($item['situacao_inscricao']) ?></strong></td>
-                            <td class="text-center"><a href="../details/details_bag.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
+                            <th colspan="2" class="text-center">Ações</th>
                         </tr>
                     <?php elseif ($user_type == RULE_FINANCEIRO): ?>
                         <tr>
                             <th>Nome da Bolsa</th>
                             <th>Código</th>
                             <th>Pendência</th>
-                            <td class="text-center"><a href="../forms/form_manage_pendency.php?id=<?= $item['id'] ?>" class="btn btn-sm btn-warning">Resolver Pendência</a></td>
+                            <th colspan="2" class="text-center">Ações</th>
                         </tr>
                     <?php endif; ?>
                 </thead>
@@ -107,18 +103,18 @@ if (isset($query)) {
                                 <?php if ($user_type == RULE_ORIENTADOR): ?>
                                     <td><?= htmlspecialchars($item['nome']) ?></td>
                                     <td><?= htmlspecialchars($item['situacao']) ?></td>
-                                    <td class="text-center"><a href="../details/details_bag.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
-                                    <td class="text-center"><a href="list_candidates.php?id_bolsa=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-info">Ver Candidatos</a></td>
+                                    <td class="text-center"><a href="../details/details_bag.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
+                                    <td class="text-center"><a href="list_candidates.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-info">Ver Candidatos</a></td>
                                 <?php elseif ($user_type == RULE_ESTUDANTE): ?>
                                     <td><?= htmlspecialchars($item['nome_bolsa']) ?></td>
                                     <td><?= (new DateTime($item['data_inscricao']))->format('d/m/Y H:i') ?></td>
                                     <td><strong><?= htmlspecialchars($item['situacao_inscricao']) ?></strong></td>
-                                    <td class="text-center"><a href="../details/details_bag.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
+                                    <td class="text-center"><a href="../details/details_bag.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
                                 <?php elseif ($user_type == RULE_FINANCEIRO): ?>
                                     <td><?= htmlspecialchars($item['nome']) ?></td>
                                     <td><?= htmlspecialchars($item['codigo_bolsa']) ?></td>
                                     <td><?= htmlspecialchars($item['situacao']) ?></td>
-                                    <td class="text-center"><a href="../forms/form_manage_pendency.php?id=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-warning">Resolver Pendência</a></td>
+                                    <td class="text-center"><a href="../forms/form_manage_pendency.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-warning">Resolver Pendência</a></td>
                                 <?php endif; ?>
                             </tr>
                         <?php endwhile; ?>
