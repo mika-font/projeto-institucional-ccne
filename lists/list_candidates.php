@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../configs/rules.php');
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_SESSION['type']) || !in_array($_SESSION['type'], [RULE_ORIENTADOR, RULE_DIRECAO, RULE_GERENTE])) {
@@ -39,11 +38,14 @@ $result = $query_candidates->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <title>Portal de Bolsas CCNE</title>
+    <link rel="stylesheet" href="../assets/css/basic.css">
+    <title>Portal de Bolsas | CCNE</title>
 </head>
 
 <body>
+    <?php include_once(__DIR__ . '/../templates/header.php'); ?>
     <div class="container mt-4">
         <h1 class="mb-4"><?= $page_title ?></h1>
 
@@ -81,6 +83,7 @@ $result = $query_candidates->get_result();
         </div>
         <a href="javascript:history.back()" class="btn btn-secondary mt-3">Voltar</a>
     </div>
+    <?php include_once(__DIR__ . '/../templates/footer.php'); ?>
 </body>
 
 </html>

@@ -55,7 +55,7 @@ if (isset($_POST['register'])) {
 } else if (isset($_POST['edit'])) {
     include_once('../control.php');
 
-    $id_to_edit = intval($_POST['id']);
+    $id_to_edit = intval($_POST['id_user']);
     $name = $_POST['name'];
     $email = $_POST['email'];
     $password = $_POST['password'];

@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../configs/rules.php');
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_POST['application']) || $_SESSION['type'] != RULE_ESTUDANTE) {

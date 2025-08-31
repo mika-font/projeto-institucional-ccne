@@ -1,5 +1,4 @@
 <?php
-include_once('../configs/rules.php');
 include_once('../control.php');
 
 if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE){
@@ -23,10 +22,13 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <title>Portal de Bolsas CCNE</title>
+    <link rel="stylesheet" href="../assets/css/basic.css">
+    <title>Portal de Bolsas | CCNE</title>
 </head>
 <body>
+    <?php include_once(__DIR__ . '/../templates/header.php'); ?>
     <div class="container mt-4">
         <h1>Gerenciamento de Usuários</h1>
         <p>Listagem de todos os usuários do sistema.</p>
@@ -74,6 +76,6 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE){
         </table>
         <a href="../central.php" class="btn btn-secondary">Voltar</a>
     </div>
-    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <?php include_once(__DIR__ . '/../templates/footer.php'); ?>
 </body>
 </html>

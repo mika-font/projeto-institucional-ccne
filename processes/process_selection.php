@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../configs/rules.php');
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_POST['selection']) || !in_array($_SESSION['type'], [RULE_ORIENTADOR, RULE_DIRECAO, RULE_GERENTE])) {

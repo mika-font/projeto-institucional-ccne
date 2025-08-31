@@ -1,18 +1,18 @@
 <?php
 if (isset($_SESSION['id_user'])) {
-    $user_id = $_SESSION['id_user'];
-    $query = $conect->prepare("SELECT nome FROM usuario WHERE id_usuario = ?");
-    $query->bind_param("i", $user_id);
-    $query->execute();
-    $result = $query->get_result();
+    $id_usuario_nav = $_SESSION['id_user'];
+    $query_nav = $conect->prepare("SELECT nome FROM usuario WHERE id_usuario = ?");
+    $query_nav->bind_param("i", $id_usuario_nav);
+    $query_nav->execute();
+    $resultado_nav = $query_nav->get_result();
 
-    $name = "Usuário";
+    $name_usuario_nav = "Usuário";
 
-    if ($result->num_rows === 1) {
-        $user_data = $result->fetch_assoc();
-        $name = $user_data['nome'];
+    if ($resultado_nav->num_rows === 1) {
+        $user_data = $resultado_nav->fetch_assoc();
+        $name_usuario_nav = $user_data['nome'];
     }
-    $first_name_only = explode(' ', trim($name))[0];
+    $first_name_only = explode(' ', trim($name_usuario_nav))[0];
 }
 ?>
 
