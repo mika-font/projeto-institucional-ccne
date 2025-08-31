@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../configs/rules.php');
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_SESSION['type']) || !in_array($_SESSION['type'], [RULE_GERENTE, RULE_DIRECAO])) {
@@ -45,11 +44,14 @@ $orientadores_result = $conect->query("SELECT id_usuario, nome FROM usuario WHER
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <title>Portal de Bolsas CCNE</title>
+    <link rel="stylesheet" href="../assets/css/basic.css">
+    <title>Portal de Bolsas | CCNE</title>
 </head>
 
 <body>
+    <?php include_once(__DIR__ . '/../templates/header.php'); ?>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -165,6 +167,6 @@ $orientadores_result = $conect->query("SELECT id_usuario, nome FROM usuario WHER
             </div>
         </div>
     </div>
-    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <?php include_once(__DIR__ . '/../templates/footer.php'); ?>
 </body>
 </html>

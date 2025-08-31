@@ -1,9 +1,12 @@
 :root {
-    --ufsm-blue: #00529c;
-    --ufsm-yellow: #f2c300;
-    --ufsm-dark-blue: #003362;
-    --ufsm-light-gray: #f8f9fa;
-    --ufsm-text-gray: #6c757d;
+    --cor-primaria: #0c1b67;
+    --cor-secundaria: #db5400;
+    --cor-fundo: #f0f0f0;
+    --cor-texto: #2c2c2c;
+}
+
+body .background {
+    background-color: var(--cor-fundo);
 }
 
 .main-header {

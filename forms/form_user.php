@@ -1,7 +1,7 @@
 <?php
 session_start();
-include_once('../configs/rules.php');
-include_once('../conect.php');
+include_once(__DIR__ . '/../configs/rules.php');
+include_once(__DIR__ . '/../conect.php');
 $conect = conectServer();
 
 $edit_mode = false;
@@ -49,11 +49,17 @@ $type = $user_editing['tipo'] ?? 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/faviconccne.png" type="image/x-icon">
-    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
-    <title>Portal de Bolsas CCNE</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/basic.css">
+    <title>Portal de Bolsas | CCNE</title>
 </head>
 
 <body>
+    <?php if(isset($_SESSION['id_user'])) {
+        include_once(__DIR__ . '/../templates/header.php');
+    } ?>
+
     <main>
         <form action="../processes/process_user.php" method="post">
             <h1><?= $edit_mode ? 'Alteração' : 'Cadastro' ?> de Usuário</h1>
@@ -120,7 +126,7 @@ $type = $user_editing['tipo'] ?? 0;
             <?php endif; ?>
         </form>
     </main>
-    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <?php include_once(__DIR__ . '/../templates/footer.php'); ?>
 </body>
 
 </html>

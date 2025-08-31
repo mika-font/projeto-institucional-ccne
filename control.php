@@ -1,7 +1,7 @@
 <?php
     session_start();
     include_once(__DIR__ . '/configs/rules.php');
-    // Verifica se o usuário está logado
+
     if (!isset($_SESSION['email']) || !isset($_SESSION['id_user']) || !isset($_SESSION['type']) || !isset($_SESSION['last_access'])) {
         session_unset();
         session_destroy();
@@ -26,7 +26,6 @@
     // Atualiza o tempo do último acesso
     $_SESSION['last_access'] = time();
 
-    // Conecta ao banco após verificação da sessão
     include_once(__DIR__ . '/conect.php');
     $conect = conectServer();
 ?>

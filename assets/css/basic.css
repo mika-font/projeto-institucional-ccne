@@ -1,0 +1,25 @@
+:root {
+    --cor-primaria: #0c1b67;
+    --cor-secundaria: #db5400;
+    --cor-fundo: #f0f0f0;
+    --cor-fundo-footer: #929292;
+    --cor-texto: #2c2c2c;
+}
+
+body .background {
+    background-color: var(--cor-fundo);
+    padding-bottom: 3rem;
+    margin-bottom: 3rem;
+}
+
+.footer {
+    background-color: var(--cor-fundo-footer);
+    color: var(--cor-texto);
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.8rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
