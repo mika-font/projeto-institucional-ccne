@@ -29,11 +29,11 @@ if (isset($_SESSION['id_user'])) {
                         <i class="bi bi-person-circle"></i> <?= htmlspecialchars($first_name_only) ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
-                        <li><a class="dropdown-item" href="./forms/form_user.php?id_user=<?= $_SESSION['id_user']; ?>">Editar Conta</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/forms/form_user.php?id_user=<?= $_SESSION['id_user']; ?>">Editar Conta</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="logout.php">Sair</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/logout.php">Sair</a></li>
                     </ul>
                 </li>
             </ul>
