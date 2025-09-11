@@ -28,6 +28,9 @@ if (isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE) {
     <div class="container mt-4">
         <h1>Gerenciamento de Cursos</h1>
         <p>Listagem de todos os cursos do sistema.</p>
+
+        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
+
         <a href="../forms/form_course.php" class="btn btn-success mb-3">Adicionar Novo Curso</a>
 
         <table class="table table-striped table-hover">

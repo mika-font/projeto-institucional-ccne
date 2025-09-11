@@ -2,7 +2,11 @@
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_POST['application']) || $_SESSION['type'] != RULE_ESTUDANTE) {
-    header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Acesso negado. Você não tem permissão para realizar esta ação.'
+    ];
+    header("Location: " . BASE_URL . "/central.php");
     exit();
 }
 
@@ -20,7 +24,11 @@ $disponibilidade_horarios = json_encode($_POST['horarios'] ?? []);
 $num_horarios_selecionados = count($_POST['horarios'] ?? []);
 
 if(empty($matricula) || empty($id_curso) || empty($telefone) || empty($cod_banco) || empty($agencia) || empty($conta) || empty($disponibilidade_horarios)) {
-    header("Location: " . BASE_URL . "/forms/form_application.php?id_bag=$id_bag&msg=campos_obrigatorios");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Por favor, preencha todos os campos.'
+    ];
+    header("Location: " . BASE_URL . "/forms/form_application.php?id_bag=$id_bag");
     exit();
 }
 
@@ -29,14 +37,22 @@ $query_bolsa->bind_param("i", $id_bag);
 $query_bolsa->execute();
 $result_bolsa = $query_bolsa->get_result();
 if ($result_bolsa->num_rows !== 1) {
-    header("Location: " . BASE_URL . "/central.php?msg=bolsa_nao_encontrada");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Bolsa não encontrada.'
+    ];
+    header("Location: " . BASE_URL . "/lists/list_my_bags.php");
     exit();
 }
 $bag = $result_bolsa->fetch_assoc();
 $carga_horaria_exigida = (int)$bag['carga_horaria'];
 
 if ($num_horarios_selecionados !== $carga_horaria_exigida) {
-    header("Location: " . BASE_URL . "/forms/form_application.php?id_bag=$id_bag&msg=horas_invalidas");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => "Você deve selecionar exatamente $carga_horaria_exigida horários de disponibilidade."
+    ];
+    header("Location: " . BASE_URL . "/forms/form_application.php?id_bag=$id_bag");
     exit();
 }
 
@@ -74,13 +90,20 @@ try {
     $insert_inscricao->execute();
 
     $conect->commit();
-    header("Location: " . BASE_URL . "/lists/list_my_bags.php?msg=inscricao_sucesso");
+    $_SESSION['alert'] = [
+        'type' => 'success',
+        'message' => 'Inscrição realizada com sucesso!'
+    ];
+    header("Location: " . BASE_URL . "/lists/list_my_bags.php");
     exit();
 
 } catch (Exception $e) {
-    // Desfaz tudo se deu errado
     $conect->rollback();
-    header("Location: " . BASE_URL . "/forms/form_application.php?id_bag=$id_bag&msg=erro_inscricao");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Erro ao realizar a inscrição.'
+    ];
+    header("Location: " . BASE_URL . "/forms/form_application.php?id_bag=$id_bag");
     exit();
 }
 ?>

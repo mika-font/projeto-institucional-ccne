@@ -28,6 +28,7 @@ $result = $query->get_result();
     <div class="container mt-4">
         <h1>Gerenciamento de Subunidades</h1>
         <p>Listagem de todas as subunidades do sistema.</p>
+        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
         <a href="../forms/form_subunit.php" class="btn btn-success mb-3">Adicionar Nova Subunidade</a>
 
         <table class="table table-striped table-hover">

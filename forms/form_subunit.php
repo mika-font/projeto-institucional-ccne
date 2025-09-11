@@ -48,6 +48,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3><?= $edit_mode ? 'Alteração' : 'Cadastro' ?> de Subunidade</h3>
+                        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
                     </div>
                     <div class="card-body">
                         <form action="../processes/process_subunit.php" method="post">

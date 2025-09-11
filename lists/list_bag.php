@@ -86,6 +86,7 @@ $situations_list = [
 
     <div class="container mt-4">
         <h1 class="mb-4">Gerenciamento de Bolsas</h1>
+        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
         <div class="d-flex justify-content-between mb-3">
             <p>Listagem de todas as bolsas do sistema.</p>
             <a href="../forms/form_bag.php" class="btn btn-success">Adicionar Nova Bolsa</a>

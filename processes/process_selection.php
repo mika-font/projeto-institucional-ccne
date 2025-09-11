@@ -2,7 +2,11 @@
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_POST['selection']) || !in_array($_SESSION['type'], [RULE_ORIENTADOR, RULE_DIRECAO, RULE_GERENTE])) {
-    header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Acesso não autorizado.'
+    ];
+    header("Location: " . BASE_URL . "/central.php");
     exit();
 }
 
@@ -28,21 +32,20 @@ try {
 
     // Se tudo deu certo, confirma as alterações
     $conect->commit();
-    header("Location: ../lists/list_candidates.php?id_bag=$id_bag&msg=selecao_sucesso");
+    $_SESSION['alert'] = [
+        'type' => 'success',
+        'message' => 'Candidato selecionado com sucesso.'
+    ];
+    header("Location: ../lists/list_candidates.php?id_bag=$id_bag");
     exit();
 
 } catch (Exception $e) {
-    // Se algo deu errado, desfaz todas as alterações
     $conect->rollback();
-    //header("Location: ../lists/list_candidates.php?id_bag=$id_bag&msg=erro_selecao");
-    //exit();
-    echo "<h1>Ocorreu um Erro na Transação!</h1>";
-    echo "<p><strong>Mensagem detalhada do MySQL:</strong> " . $e->getMessage() . "</p>";
-    echo "<p><strong>Código do Erro:</strong> " . $e->getCode() . "</p>";
-    echo "<p><strong>Arquivo onde o erro ocorreu:</strong> " . $e->getFile() . "</p>";
-    echo "<p><strong>Linha do erro:</strong> " . $e->getLine() . "</p>";
-    
-    // Interrompe o script para que possamos ler o erro claramente
-    die("Execução interrompida para depuração.");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Erro ao selecionar candidato.'
+    ];
+    header("Location: ../lists/list_candidates.php?id_bag=$id_bag");
+    exit();
 }
 ?>

@@ -32,6 +32,7 @@ if(isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE){
     <div class="container mt-4">
         <h1>Gerenciamento de Usuários</h1>
         <p>Listagem de todos os usuários do sistema.</p>
+        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
         <a href="../forms/form_user.php" class="btn btn-success mb-3">Adicionar Novo Usuário</a>
 
         <table class="table table-striped table-hover">

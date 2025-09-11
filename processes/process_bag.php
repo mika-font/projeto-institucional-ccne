@@ -2,7 +2,11 @@
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_SESSION['type']) || $_SESSION['type'] != RULE_GERENTE) {
-    header('Location: ' . BASE_URL . '/central.php?msg=nao_autorizado');
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Acesso não autorizado.'
+    ];
+    header('Location: ' . BASE_URL . '/central.php');
     exit();
 }
 
@@ -20,7 +24,12 @@ if (isset($_POST['register'])) {
     $edital_url = $_POST['edital_url'];
 
     if (empty($name) || empty($sub_origem) || empty($sub_alocacao) || empty($workload) || empty($modality) || empty($situation) || empty($edital_url)) {
-        header('Location: ../forms/form_bag.php?msg=campos_vazios');
+
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Por favor, preencha todos os campos.'
+        ];
+        header('Location: ../forms/form_bag.php');
         exit();
     }
 
@@ -30,9 +39,17 @@ if (isset($_POST['register'])) {
     $insert->bind_param("siiississs", $name, $sub_origem, $sub_alocacao, $leader_id, $code, $description, $workload, $modality, $situation, $edital_url);
 
     if ($insert->execute()) {
-        header("Location: ../lists/list_bag.php?msg=bolsa_cadastrada");
+        $_SESSION['alert'] = [
+            'type' => 'success',
+            'message' => 'Bolsa cadastrada com sucesso.'
+        ];
+        header("Location: ../lists/list_bag.php");
     } else {
-        header("Location: ../forms/form_bag.php?msg=erro_cadastro");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Erro ao cadastrar bolsa.'
+        ];
+        header("Location: ../forms/form_bag.php");
     }
     exit();
 } else if (isset($_POST['edit'])) {
@@ -50,7 +67,11 @@ if (isset($_POST['register'])) {
     $edital_url = $_POST['edital_url'] ?? '';
 
     if (empty($id_bag) || empty($name) || empty($sub_origem) || empty($sub_alocacao) || empty($workload) || empty($description) || empty($modality) || empty($situation) || empty($edital_url)) {
-        header("Location: ../forms/form_bag.php?id_bag=$id_bag&msg=campos_vazios");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Por favor, preencha todos os campos.'
+        ];
+        header("Location: ../forms/form_bag.php?id_bag=$id_bag");
         exit();
     }
 
@@ -61,16 +82,28 @@ if (isset($_POST['register'])) {
     $update->bind_param("siiississsi", $name, $sub_origem, $sub_alocacao, $leader_id, $code, $description, $workload, $modality, $situation, $edital_url, $id_bag);
 
     if ($update->execute()) {
-        header("Location: ../lists/list_bag.php?msg=bolsa_alterada");
+        $_SESSION['alert'] = [
+            'type' => 'success',
+            'message' => 'Bolsa alterada com sucesso.'
+        ];
+        header("Location: ../lists/list_bag.php");
     } else {
-        header("Location: ../forms/form_bag.php?id_bag=$id_bag&msg=erro_alteracao");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Erro ao alterar bolsa.'
+        ];
+        header("Location: ../forms/form_bag.php?id_bag=$id_bag");
     }
     exit();
 } else if (isset($_POST['delete'])) {
     $id_bag = intval($_POST['id_bag'] ?? 0);
 
     if (empty($id_bag)) {
-        header("Location: ../lists/list_bag.php?msg=id_nao_encontrado");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'ID da bolsa não encontrado.'
+        ];
+        header("Location: ../lists/list_bag.php");
         exit();
     }
 
@@ -95,7 +128,11 @@ if (isset($_POST['register'])) {
 
         if (in_array($situacao_atual, $status_proibidos)) {
             // Se o status for proibido, redireciona com uma mensagem de erro específica
-            header("Location: ../lists/list_bag.php?msg=erro_exclusao_status_ativo");
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'Não é possível excluir uma bolsa com status ativo ou em andamento.'
+            ];
+            header("Location: ../lists/list_bag.php");
             exit();
         }
     }
@@ -105,14 +142,25 @@ if (isset($_POST['register'])) {
         $delete->bind_param("i", $id_bag);
         $delete->execute();
 
-        header("Location: ../lists/list_bag.php?msg=bolsa_excluida");
+        $_SESSION['alert'] = [
+            'type' => 'success',
+            'message' => 'Bolsa excluída com sucesso.'
+        ];
+        header("Location: ../lists/list_bag.php");
         exit();
     } catch (mysqli_sql_exception $e) {
         if ($e->getCode() == 1451) {
-            header("Location: ../lists/list_bag.php?msg=erro_exclusao_vinculo_bolsa");
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'Não é possível excluir uma bolsa com vínculos.'
+            ];
+            header("Location: ../lists/list_bag.php");
         } else {
-            // Para qualquer outro erro de banco de dados
-            header("Location: ../lists/list_bag.php?msg=erro_banco");
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'Erro ao excluir bolsa.'
+            ];
+            header("Location: ../lists/list_bag.php");
         }
         exit();
     }

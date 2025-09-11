@@ -32,6 +32,8 @@ if (isset($_GET['msg'])) {
     <main class="container mt-4">
         <h1 class="mb-4"><?= $welcome_message ?></h1>
 
+        <?php include_once(__DIR__ . '/templates/alerts.php'); ?>
+
         <?php if (!empty($feedback_message)): ?>
             <div class="alert alert-success"><?= htmlspecialchars($feedback_message) ?></div>
         <?php endif; ?>

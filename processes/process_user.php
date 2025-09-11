@@ -12,21 +12,37 @@ if (isset($_POST['register'])) {
     $type = intval($_POST['type']);
 
     if (empty($name) || empty($email) || empty($password)) {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=campos_vazios');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Por favor, preencha todos os campos.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php');
         exit();
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=email_invalido');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'E-mail inválido.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php');
         exit();
     }
     $allowed_domains = ['ufsm.br', 'acad.ufsm.br'];
     $email_domain = substr(strrchr($email, "@"), 1);
     if (!in_array($email_domain, $allowed_domains)) {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=dominio_invalido');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Domínio de e-mail inválido. Use um e-mail da UFSM.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php');
         exit();
     }
     if ($password !== $repeat_password) {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=senhas_nao_coincidem');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'As senhas não coincidem.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php');
         exit();
     }
 
@@ -34,7 +50,11 @@ if (isset($_POST['register'])) {
     $stmt->bind_param("s", $email);
     $stmt->execute();
     if ($stmt->get_result()->num_rows > 0) {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=email_existente');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'E-mail já está em uso.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php');
         exit();
     }
     $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
@@ -43,13 +63,25 @@ if (isset($_POST['register'])) {
 
     if ($insert_user->execute()) {
         if (isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE) {
-            header("Location: " . BASE_URL . "/lists/list_user.php?msg=cadastro_sucesso");
+            $_SESSION['alert'] = [
+                'type' => 'success',
+                'message' => 'Usuário cadastrado com sucesso.'
+            ];
+            header("Location: " . BASE_URL . "/lists/list_user.php");
         } else {
-            header("Location: " . BASE_URL . "/index.php?msg=cadastro_sucesso");
+            $_SESSION['alert'] = [
+                'type' => 'success',
+                'message' => 'Cadastro realizado com sucesso. Faça login para continuar.'
+            ];
+            header("Location: " . BASE_URL . "/index.php");
         }
         exit();
     } else {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?msg=erro_cadastro');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Erro ao cadastrar usuário. Tente novamente mais tarde.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php');
         exit();
     }
 } else if (isset($_POST['edit'])) {
@@ -63,19 +95,31 @@ if (isset($_POST['register'])) {
     $type = intval($_POST['type']);
 
     if (!isset($_SESSION['id_user']) || ($_SESSION['id_user'] != $id_to_edit && $_SESSION['type'] != RULE_GERENTE)) {
-        header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Acesso não autorizado.'
+        ];
+        header("Location: " . BASE_URL . "/central.php");
         exit();
     }
 
     if (empty($id_to_edit) || empty($name) || empty($email) || ($type === null || $type === '')) {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=campos_vazios');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Por favor, preencha todos os campos.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit);
         exit();
     }
 
     $allowed_domains = ['ufsm.br', 'acad.ufsm.br'];
     $email_domain = substr(strrchr($email, "@"), 1);
     if (!in_array($email_domain, $allowed_domains)) {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=dominio_invalido');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Domínio de e-mail inválido. Use um e-mail da UFSM.'
+        ];
+        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit);
         exit();
     }
 
@@ -90,7 +134,11 @@ if (isset($_POST['register'])) {
         $check_stmt->execute();
 
         if ($check_stmt->get_result()->num_rows > 0) {
-            header('Location: ' . BASE_URL . '/forms/form_user.php?id=' . $id_to_edit . '&msg=email_existente');
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'E-mail já está em uso por outro usuário.'
+            ];
+            header('Location: ' . BASE_URL . '/forms/form_user.php?id=' . $id_to_edit);
             exit();
         }
     }
@@ -101,7 +149,11 @@ if (isset($_POST['register'])) {
 
     if (!empty($password)) {
         if ($password !== $repeat_password) {
-            header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=senhas_nao_coincidem');
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'As senhas não coincidem.'
+            ];
+            header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit);
             exit();
         }
         $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
@@ -118,9 +170,17 @@ if (isset($_POST['register'])) {
     $update->bind_param($types, ...$params);
 
     if ($update->execute()) {
-        header("Location: " . BASE_URL . "/central.php?msg=alteracao_sucesso");
+        $_SESSION['alert'] = [
+            'type' => 'success',
+            'message' => 'Usuário alterado com sucesso.'
+        ];
+        header("Location: " . BASE_URL . "/central.php");
     } else {
-        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit . '&msg=erro_alteracao');
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Erro ao alterar usuário. Tente novamente mais tarde.'
+        ];  
+        header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit);
     }
     exit();
 } else if (isset($_POST['delete'])) {
@@ -130,15 +190,27 @@ if (isset($_POST['register'])) {
 
     // Somente Gerentes podem excluir, e não podem excluir a si mesmos
     if (!isset($_SESSION['type']) || $_SESSION['type'] != RULE_GERENTE) {
-        header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Acesso não autorizado.'
+        ];
+        header("Location: " . BASE_URL . "/central.php");
         exit();
     }
     if ($_SESSION['id_user'] == $id_to_delete) {
-        header("Location: " . BASE_URL . "/lists/list_user.php?msg=erro_autoexclusao");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Você não pode excluir sua própria conta.'
+        ];
+        header("Location: " . BASE_URL . "/lists/list_user.php");
         exit();
     }
     if (empty($id_to_delete)) {
-        header("Location: " . BASE_URL . "/lists/list_user.php?msg=id_invalido");
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'ID do usuário não encontrado.'
+        ];  
+        header("Location: " . BASE_URL . "/lists/list_user.php");
         exit();
     }
 
@@ -148,18 +220,34 @@ if (isset($_POST['register'])) {
         $delete->execute();
 
         if ($delete->affected_rows > 0) {
-            header("Location: " . BASE_URL . "/lists/list_user.php?msg=exclusao_sucesso");
+            $_SESSION['alert'] = [
+                'type' => 'success',
+                'message' => 'Usuário excluído com sucesso.'
+            ];
+            header("Location: " . BASE_URL . "/lists/list_user.php");
         } else {
-            header("Location: " . BASE_URL . "/lists/list_user.php?msg=usuario_nao_encontrado");
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'Usuário não encontrado ou já foi excluído.'
+            ];
+            header("Location: " . BASE_URL . "/lists/list_user.php");
         }
         exit();
     } catch (mysqli_sql_exception $e) {
-        // Erro 1451 é o código para violação de chave estrangeira (FK constraint)
         if ($e->getCode() == 1451) {
-            header("Location: " . BASE_URL . "/lists/list_user.php?msg=erro_exclusao_vinculo");
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'Não é possível excluir o usuário porque ele está vinculado a outros registros.'
+            ];
+            header("Location: " . BASE_URL . "/lists/list_user.php");
+            exit();
         } else {
-            // Outro erro de banco de dados
-            header("Location: " . BASE_URL . "/lists/list_user.php?msg=erro_banco");
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'Erro ao excluir usuário. Tente novamente mais tarde.'
+            ];
+            header("Location: " . BASE_URL . "/lists/list_user.php");
+            exit();
         }
         exit();
     }

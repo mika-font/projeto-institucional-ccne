@@ -72,6 +72,7 @@ $cursos_result = $conect->query("SELECT id_curso, nome FROM curso ORDER BY nome 
                 <div class="card">
                     <div class="card-header">
                         <h3>Inscrição para a Bolsa: "<?= htmlspecialchars($bag['nome']) ?>"</h3>
+                        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
                     </div>
                     <div class="card-body">
                         <form action="../processes/process_application.php" method="post">

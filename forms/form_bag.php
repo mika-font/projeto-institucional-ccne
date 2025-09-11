@@ -58,6 +58,7 @@ $orientadores_result = $conect->query("SELECT id_usuario, nome FROM usuario WHER
                 <div class="card">
                     <div class="card-header">
                         <h3><?= $edit_mode ? 'Alteração ' : 'Cadastro' ?> de Bolsa</h3>
+                        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
                     </div>
                     <div class="card-body">
                         <form action="../processes/process_bag.php" method="post">

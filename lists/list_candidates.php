@@ -49,6 +49,8 @@ $result = $query_candidates->get_result();
     <div class="container mt-4">
         <h1 class="mb-4"><?= $page_title ?></h1>
 
+        <?php include_once(__DIR__ . '/../templates/alerts.php'); ?>
+
         <div class="table-responsive">
             <table class="table table-striped table-hover table-bordered">
                 <thead class="table-dark">

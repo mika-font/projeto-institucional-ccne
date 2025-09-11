@@ -5,6 +5,18 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+if (isset($_GET['msg']) && $_GET['msg'] == 'credenciais_invalidas') {
+    $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Credenciais inválidas.'];
+}
+
+if (isset($_GET['msg']) && $_GET['msg'] == 'n_autorizado') {
+    $_SESSION['alert'] = ['type' => 'warning', 'message' => 'Acesso não autorizado.'];
+}
+
+if (isset($_GET['msg']) && $_GET['msg'] == 'sessao_expirada') {
+    $_SESSION['alert'] = ['type' => 'warning', 'message' => 'Sessão expirada. Faça login novamente.'];
+}
+
 if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['password'])) {
     include_once(__DIR__ . '/conect.php');
     $conect = conectServer();
@@ -35,7 +47,11 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['password
             exit();
         } else {
             session_destroy();
-            header('Location: ' . BASE_URL . '/index.php?msg=credenciais_invalidas');
+            $_SESSION['alert'] = [
+                'type' => 'danger',
+                'message' => 'E-mail ou senha incorretos.'
+            ];
+            header('Location: ' . BASE_URL . '/index.php');
             exit();
         }
     }
@@ -44,20 +60,6 @@ if (isset($_POST['login']) && !empty($_POST['email']) && !empty($_POST['password
     exit();
 }
 
-$error_message = '';
-if (isset($_GET['msg'])) {
-    switch ($_GET['msg']) {
-        case 'credenciais_invalidas':
-            $error_message = 'E-mail ou senha incorretos.';
-            break;
-        case 'nao_autorizado':
-            $error_message = 'Você não está autorizado a acessar esta página.';
-            break;
-        case 'timeout':
-            $error_message = 'Sua sessão expirou. Por favor, faça login novamente.';
-            break;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -104,11 +106,7 @@ if (isset($_GET['msg'])) {
                         </div>
 
                         <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-                            <?php if (!empty($error_message)): ?>
-                                <div class="alert alert-danger" role="alert">
-                                    <?= htmlspecialchars($error_message) ?>
-                                </div>
-                            <?php endif; ?>
+                            <?php include_once(__DIR__ . '/templates/alerts.php'); ?>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">E-mail Institucional</label>

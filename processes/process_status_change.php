@@ -2,7 +2,12 @@
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_POST['change_status']) || !in_array($_SESSION['type'], [RULE_FINANCEIRO, RULE_DIRECAO, RULE_GERENTE])) {
-    header("Location: " . BASE_URL . "/central.php?msg=nao_autorizado");
+
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Acesso não autorizado.'
+    ];
+    header("Location: " . BASE_URL . "/central.php");
     exit();
 }
 
@@ -11,7 +16,11 @@ $novo_status = $_POST['novo_status'];
 $id_usuario_logado = $_SESSION['id_user'];
 
 if (empty($id_bag) || empty($novo_status)) {
-    header("Location: " . BASE_URL . "/details/details_bag.php?id_bag=$id_bag&msg=erro_dados_insuficientes");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Dados insuficientes para alterar o status.'
+    ];
+    header("Location: " . BASE_URL . "/details/details_bag.php?id_bag=$id_bag");
     exit();
 }
 
@@ -46,13 +55,20 @@ try {
 
     // Se todas as operações foram bem-sucedidas, confirma a transação
     $conect->commit();
-    header("Location: " . BASE_URL . "/details/details_bag.php?id_bag=$id_bag&msg=status_alterado_sucesso");
+    $_SESSION['alert'] = [
+        'type' => 'success',
+        'message' => 'Status da bolsa alterado com sucesso.'
+    ];
+    header("Location: " . BASE_URL . "/details/details_bag.php?id_bag=$id_bag");
     exit();
 
 } catch (Exception $e) {
-    // Se qualquer operação falhou, desfaz tudo
     $conect->rollback();
-    header("Location: " . BASE_URL . "/details/details_bag.php?id_bag=$id_bag&msg=erro_banco");
+    $_SESSION['alert'] = [
+        'type' => 'danger',
+        'message' => 'Erro ao alterar status da bolsa.'
+    ];
+    header("Location: " . BASE_URL . "/details/details_bag.php?id_bag=$id_bag");
     exit();
 }
 ?>
