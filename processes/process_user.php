@@ -138,7 +138,7 @@ if (isset($_POST['register'])) {
                 'type' => 'danger',
                 'message' => 'E-mail já está em uso por outro usuário.'
             ];
-            header('Location: ' . BASE_URL . '/forms/form_user.php?id=' . $id_to_edit);
+            header('Location: ' . BASE_URL . '/forms/form_user.php?id_user=' . $id_to_edit);
             exit();
         }
     }

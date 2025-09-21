@@ -52,6 +52,15 @@ try {
             }
         }
     }
+    if (in_array($novo_status, ['Encerrada', 'Cancelada'])) {
+       $close_history = $conect->prepare(
+            "UPDATE historico
+            SET data_fim = CURDATE()
+            WHERE id_bolsa = ? AND data_fim IS NULL
+       ");
+       $close_history->bind_param("i", $id_bag);
+       $close_history->execute();
+   }
 
     // Se todas as operações foram bem-sucedidas, confirma a transação
     $conect->commit();

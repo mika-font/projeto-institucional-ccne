@@ -23,7 +23,7 @@ $conta = $_POST['conta'];
 $disponibilidade_horarios = json_encode($_POST['horarios'] ?? []);
 $num_horarios_selecionados = count($_POST['horarios'] ?? []);
 
-if(empty($matricula) || empty($id_curso) || empty($telefone) || empty($cod_banco) || empty($agencia) || empty($conta) || empty($disponibilidade_horarios)) {
+if (empty($matricula) || empty($id_curso) || empty($telefone) || empty($cod_banco) || empty($agencia) || empty($conta) || empty($disponibilidade_horarios)) {
     $_SESSION['alert'] = [
         'type' => 'danger',
         'message' => 'Por favor, preencha todos os campos.'
@@ -59,7 +59,7 @@ if ($num_horarios_selecionados !== $carga_horaria_exigida) {
 $conect->begin_transaction();
 try {
     // Verifica se o estudante possui dados
-    $query_dados = $conect->prepare("SELECT id_estudante FROM dados_estudante WHERE id_estudante = ?");
+    $query_dados = $conect->prepare("SELECT id_estudante FROM dados_estudante WHERE id_usuario = ?");
     $query_dados->bind_param("i", $user_id);
     $query_dados->execute();
     $tem_dados = $query_dados->get_result()->num_rows > 0;
@@ -67,16 +67,20 @@ try {
     if ($tem_dados) {
         // Se já tem, atualiza os dados
         $update = $conect->prepare(
-            "UPDATE dados_estudante SET matricula = ?, id_curso = ?, telefone = ?, cod_banco = ?, agencia = ?, conta = ? WHERE id_usuario = ?"
+            "UPDATE dados_estudante
+             SET matricula = ?, id_curso = ?, telefone = ?, cod_banco = ?, agencia = ?, conta = ?
+             WHERE id_usuario = ? LIMIT 1"
         );
-        $update->bind_param("siiisssi", $matricula, $id_curso, $telefone, $cod_banco, $agencia, $conta, $user_id);
+        $update->bind_param("sissssi", $matricula, $id_curso, $telefone, $cod_banco, $agencia, $conta, $user_id);
         $update->execute();
     } else {
         // Se não tem, insere os novos dados
         $insert = $conect->prepare(
-            "INSERT INTO dados_estudante (id_usuario, matricula, id_curso, telefone, cod_banco, agencia, conta) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO dados_estudante
+            (id_usuario, matricula, id_curso, telefone, cod_banco, agencia, conta)
+            VALUES (?, ?, ?, ?, ?, ?, ?)"
         );
-        $insert->bind_param("isiisss", $user_id, $matricula, $id_curso, $telefone, $cod_banco, $agencia, $conta);
+        $insert->bind_param("isissss", $user_id, $matricula, $id_curso, $telefone, $cod_banco, $agencia, $conta);
         $insert->execute();
     }
 
@@ -96,7 +100,6 @@ try {
     ];
     header("Location: " . BASE_URL . "/lists/list_my_bags.php");
     exit();
-
 } catch (Exception $e) {
     $conect->rollback();
     $_SESSION['alert'] = [
@@ -106,4 +109,3 @@ try {
     header("Location: " . BASE_URL . "/forms/form_application.php?id_bag=$id_bag");
     exit();
 }
-?>
