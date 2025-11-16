@@ -1,0 +1,13 @@
+{
+    "name": "vendor/projeto-ccne",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Mikael Fontoura",
+            "email": "mikaelfontoura29@gmail.com"
+        }
+    ],
+    "require": {
+        "dompdf/dompdf": "^3.1"
+    }
+}

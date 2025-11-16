@@ -1,0 +1,21 @@
+# Composer
+/vendor/
+composer.lock
+composer.phar
+
+# Logs
+*.log
+logs/
+*.err
+
+# Cache
+cache/
+*.cache
+
+# VSCode
+.vscode/
+
+# Arquivos temporários
+tmp/
+temp/
+*.tmp
