@@ -122,7 +122,20 @@ $type = $user_editing['tipo'] ?? 0;
                                     <input type="hidden" name="type" value="<?= RULE_GERENTE ?>">
                                     <div class="form-text">O Gerente Master não pode alterar o seu próprio nível de acesso.</div>
                                 </div>
-                            <?php else: ?>
+                            <?php 
+                            // Caso 3: O usuário logado é um Gerente E está cadastrando um novo usuário.
+                            elseif (isset($_SESSION['type']) && $_SESSION['type'] == RULE_GERENTE && !$edit_mode) : ?>
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Tipo de Usuário:</label>
+                                    <select class="form-select" id="type" name="type" required>
+                                        <option value="<?= RULE_ESTUDANTE ?>">Estudante</option>
+                                        <option value="<?= RULE_ORIENTADOR ?>">Orientador</option>
+                                        <option value="<?= RULE_DIRECAO ?>">Direção</option>
+                                        <option value="<?= RULE_FINANCEIRO ?>">Financeiro</option>
+                                        <option value="<?= RULE_GERENTE ?>">Gerente</option>
+                                    </select>
+                                </div>
+                            <?php else: // Caso 4: Cadastro público ou outros usuários (não-gerentes). ?>
                                 <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
                             <?php endif; ?>
 

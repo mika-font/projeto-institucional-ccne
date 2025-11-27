@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once('../configs/rules.php');
 include_once('../conect.php');
 $conect = conectServer();

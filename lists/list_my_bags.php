@@ -1,4 +1,8 @@
 <?php
+/*
+    Página: Minhas Bolsas
+    Descrição: Lista as bolsas associadas ao usuário logado, seja como Estudante, Orientador ou Financeiro.
+*/
 include_once(__DIR__ . '/../control.php');
 
 // Apenas Estudante, Orientador e Financeiro podem acessar esta página

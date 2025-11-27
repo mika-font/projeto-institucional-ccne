@@ -1,4 +1,8 @@
 <?php
+/*
+    Página: Listagem de Bolsas
+    Descrição: Lista todas as bolsas cadastradas no sistema, com opções de filtro por subunidade de origem e situação da bolsa.
+*/
 include_once(__DIR__ . '/../control.php');
 
 if (!isset($_SESSION['type']) || !in_array($_SESSION['type'], [RULE_GERENTE, RULE_DIRECAO])) {
