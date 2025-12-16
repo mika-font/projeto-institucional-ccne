@@ -127,7 +127,7 @@ if ($user_type == RULE_ESTUDANTE) {
                                 <input type="hidden" name="id_bag" value="<?= $id_bag ?>">
 
                                 <select class="form-select mb-2" name="novo_status" required>
-                                    <?php if ($user_type == RULE_FINANCEIRO): ?>
+                                    <?php if ($user_type == RULE_FINANCEIRO && $bag['situacao'] == 'Pendente de Ativação (Financeiro)'): ?>
                                         <option value="Vigente">Mover para "Vigente"</option>
                                         <option value="Encerrada">Mover para "Encerrada"</option>
                                     <?php else: 
@@ -147,7 +147,7 @@ if ($user_type == RULE_ESTUDANTE) {
                             </form>
                         <?php endif; ?>
 
-                        <a href="javascript:history.back()" class="btn btn-outline-secondary mt-3">Voltar</a>
+                        <a href="javascript:location.reload()"  class="btn btn-outline-secondary mt-3">Voltar</a>
                     </div>
                 </div>
             </div>

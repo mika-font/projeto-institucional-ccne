@@ -120,9 +120,9 @@ if (isset($query)) {
                                     <td class="text-center"><a href="../details/details_bag.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-secondary">Ver Detalhes</a></td>
                                 <?php elseif ($user_type == RULE_FINANCEIRO): ?>
                                     <td><?= htmlspecialchars($item['nome']) ?></td>
-                                    <td><?= htmlspecialchars($item['codigo_bolsa']) ?></td>
+                                    <td><?= htmlspecialchars($item['codigo']) ?></td>
                                     <td><?= htmlspecialchars($item['situacao']) ?></td>
-                                    <td class="text-center"><a href="../forms/form_manage_pendency.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-warning">Resolver Pendência</a></td>
+                                    <td class="text-center"><a href="../details/details_bag.php?id_bag=<?= $item['id_bolsa'] ?>" class="btn btn-sm btn-warning">Resolver Pendência</a></td>
                                 <?php endif; ?>
                             </tr>
                         <?php endwhile; ?>

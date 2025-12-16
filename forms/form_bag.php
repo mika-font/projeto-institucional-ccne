@@ -169,5 +169,23 @@ $orientadores_result = $conect->query("SELECT id_usuario, nome FROM usuario WHER
         </div>
     </div>
     <?php include_once(__DIR__ . '/../templates/footer.php'); ?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){ 
+            const subOrigemSelect = document.getElementById('id_sub_origem');
+            const subAlocacaoSelect = document.getElementById('id_sub_alocacao');
+            let userChanged = false;
+
+            subAlocacaoSelect.addEventListener('change', function() {
+                userChanged = true;
+            });
+
+            subOrigemSelect.addEventListener('change', function() {
+                if (!userChanged) {
+                    subAlocacaoSelect.value = this.value;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

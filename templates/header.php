@@ -13,12 +13,27 @@ if (isset($_SESSION['id_user'])) {
         $name_usuario_nav = $user_data['nome'];
     }
     $first_name_only = explode(' ', trim($name_usuario_nav))[0];
+
+    $user_roles = [
+        RULE_ESTUDANTE => 'Estudante',
+        RULE_ORIENTADOR => 'Orientador',
+        RULE_DIRECAO => 'Direção',
+        RULE_FINANCEIRO => 'Financeiro',
+        RULE_GERENTE => 'Gerente'
+    ];
+
+    $user_role_name = $user_roles[$_SESSION['type']] ?? 'Desconhecido';
 }
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="<?= BASE_URL ?>/central.php">Portal de Bolsas | CCNE</a>
+        <a class="navbar-brand" href="<?= BASE_URL ?>/central.php">
+            Portal de Bolsas | CCNE
+            <?php if (isset($_SESSION['type'])): ?>
+                <span class="badge bg-secondary"><?= htmlspecialchars($user_role_name) ?></span>
+            <?php endif; ?>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
